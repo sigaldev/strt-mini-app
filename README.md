@@ -1,73 +1,79 @@
-# React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Frontend Docker Setup — README
 
-Currently, two official plugins are available:
+This project is a **React (Vite) frontend** running inside Docker.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## Requirements
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Make sure you have:
 
-## Expanding the ESLint configuration
+* **Docker**
+* **Docker Compose**
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Check:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+docker --version
+docker compose version
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Project Structure (short overview)
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+project/
+│── Dockerfile
+│── docker-compose.yml
+│── package.json
+└── src/...
+```
+
+The development server runs via Vite on port **5173**.
+
+---
+
+## How to Run the Project
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/sigaldev/strt-mini-app.git
+cd strt-mini-app
+```
+
+### 2. Build the containers
+
+```bash
+docker compose build
+```
+
+### 3. Start the project
+
+```bash
+docker compose up
+```
+
+After the container starts, the frontend will be available at:
+
+[http://localhost:5173](http://localhost:5173)
+
+---
+
+## ✅ Stop the project
+
+```bash
+docker compose down
+```
+
+---
+
+## ✅ Rebuild when dependencies change
+
+If `package.json` or `Dockerfile` was updated:
+
+```bash
+docker compose up --build
 ```
