@@ -1,7 +1,7 @@
 import {ChevronRight} from "lucide-react";
 import rightImg from "../../../assets/profileBanner/banner-3.svg";
 import decor from "../../../assets/profileBanner/decor2.svg";
-import star from "../../../assets/profileBanner/star.svg";
+import star from "../../../assets/star.svg";
 
 const ScholarshipBanner = () => {
     return (

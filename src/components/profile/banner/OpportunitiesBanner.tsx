@@ -1,7 +1,7 @@
 import decor from "../../../assets/profileBanner/decor3.svg";
 import logo from "../../../assets/profileBanner/logo.svg";
 import bg from "../../../assets/profileBanner/banner-4.svg";
-import star from "../../../assets/profileBanner/star.svg";
+import star from "../../../assets/star.svg";
 
 const OpportunitiesBanner = () => {
     return (

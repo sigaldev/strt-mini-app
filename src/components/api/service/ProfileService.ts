@@ -70,16 +70,16 @@ interface Profile {
 
 class ProfileServiceClass {
     async getProfile(): Promise<Profile> {
-        const token = localStorage.getItem("token");
-        console.log("Токен" + token)
-        const response = await api.get("/api/v1/my/profile/", {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        console.log("[PROFILE SERVICE] Profile fetched successfully:", response.data);
-        return response.data.user;
+        try {
+            const response = await api.get("/api/v1/my/profile/");
+            console.log("[PROFILE SERVICE] Profile fetched successfully:", response.data);
+            return response.data.user;
+        } catch (error) {
+            console.error("[PROFILE SERVICE] Failed to load profile:", error);
+            throw error;
+        }
     }
 }
 
 export const ProfileService = new ProfileServiceClass();
 export type { Profile, Level, LevelBonus, LevelBonusPartner, Avatar, Group, University };
-

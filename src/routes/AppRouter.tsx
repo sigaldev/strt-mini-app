@@ -1,9 +1,17 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import { routesConfig } from "./routesConfig.tsx";
 import Layout from "../components/Layout.tsx";
 import ScrollToTop from "../components/ScrollToTop.tsx";
+import {setupInterceptors} from "../components/api/setupInterceptors.ts";
 
-const AppRouter = () => {
+const InnerAppRouter = () => {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        setupInterceptors(navigate);
+    }, [navigate]);
+
     const renderRoutes = (config: typeof routesConfig) =>
         config.map((route, idx) => {
             if (route.layout && route.children) {
@@ -30,11 +38,17 @@ const AppRouter = () => {
         });
 
     return (
-        <Router>
+        <>
             <ScrollToTop />
             <Routes>{renderRoutes(routesConfig)}</Routes>
-        </Router>
+        </>
     );
 };
+
+const AppRouter = () => (
+    <Router>
+        <InnerAppRouter />
+    </Router>
+);
 
 export default AppRouter;

@@ -7,10 +7,10 @@ import NotificationsModal from "../components/profile/NotificationsModal";
 import BurgerOverlay from "../components/profile/BurgerOverlay";
 import BannersSlider from "../components/profile/BannerSlider.tsx";
 import CareerBanner from "../components/profile/banner/CareerBanner.tsx";
-import PeopleSearchBanner from "../components/profile/banner/PeopleSearchBanner.tsx";
 import ScholarshipBanner from "../components/profile/banner/ScholarshipBanner.tsx";
 import OpportunitiesBanner from "../components/profile/banner/OpportunitiesBanner.tsx";
 import { ProfileService, type Profile } from "../components/api/service/ProfileService.ts";
+import Loader from "../components/Loader.tsx";
 
 
 const ProfilePage = () => {
@@ -20,7 +20,6 @@ const ProfilePage = () => {
 
     const banners = [
         <CareerBanner key="career" />,
-        <PeopleSearchBanner key="people" />,
         <ScholarshipBanner key="scholarship" />,
         <OpportunitiesBanner key="opportunities" />,
     ];
@@ -64,7 +63,7 @@ const ProfilePage = () => {
 
     if (!profileData) {
         console.log("[PROFILE PAGE] Profile data not loaded yet, showing loader");
-        return <div>Loading...</div>;
+        return <Loader />;
     }
 
     console.log("[PROFILE PAGE] Rendering ProfilePage");

@@ -7,42 +7,43 @@ interface RetryAxiosRequestConfig extends InternalAxiosRequestConfig {
 }
 
 export function setupInterceptors(navigate: (path: string) => void) {
-
+    // --- Request interceptor ---
     api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-        const access = localStorage.getItem("access");
+        // Токен в cookie берём прямо в каждом запросе
+        const token = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("STRT_MAX_ACCESS_TOKEN="))
+            ?.split("=")[1];
 
-        if (access) {
-            config.headers.set("Authorization", `Bearer ${access}`);
+        if (token && config.headers) {
+            config.headers["Authorization"] = `Bearer ${token}`;
         }
 
         return config;
     });
 
+    // --- Response interceptor ---
     api.interceptors.response.use(
-        (res) => res,
+        (response) => response,
         async (error: AxiosError) => {
-
             const originalRequest = error.config as RetryAxiosRequestConfig;
 
             // ---- REFRESH ----
             if (
                 error.response?.status === 401 &&
                 !originalRequest._retry &&
-                !originalRequest.url?.includes("/api/auth/refresh")
+                !originalRequest.url?.includes("/api/v1/sign_in/refresh/")
             ) {
                 originalRequest._retry = true;
 
                 try {
                     const newAccess = await AuthService.refreshToken();
-
-                    originalRequest.headers.set(
-                        "Authorization",
-                        `Bearer ${newAccess}`
-                    );
-
+                    if (originalRequest.headers) {
+                        originalRequest.headers["Authorization"] = `Bearer ${newAccess}`;
+                    }
                     return api(originalRequest);
                 } catch (refreshError) {
-                    localStorage.removeItem("access");
+                    AuthService.logout();
                     navigate("/login");
                     return Promise.reject(refreshError);
                 }
@@ -51,9 +52,9 @@ export function setupInterceptors(navigate: (path: string) => void) {
             // ---- UNAUTHORIZED ----
             if (
                 error.response?.status === 401 &&
-                !originalRequest.url?.includes("/api/auth/refresh")
+                !originalRequest.url?.includes("/api/v1/sign_in/refresh/")
             ) {
-                localStorage.removeItem("access");
+                AuthService.logout();
                 navigate("/login");
             }
 

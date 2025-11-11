@@ -1,3 +1,5 @@
+import type {Profile} from "../api/service/ProfileService.ts";
+
 interface ProfileCardProps {
     profileData: any
     getInitials: () => string
