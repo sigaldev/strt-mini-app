@@ -1,10 +1,11 @@
-import { Swiper, SwiperSlide } from "swiper/react"
-import { Autoplay, Pagination } from "swiper/modules"
-import 'swiper/css'
-import 'swiper/css/pagination'
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Pagination } from "swiper/modules";
+import 'swiper/css';
+import 'swiper/css/pagination';
+import type {JSX} from "react";
 
 interface BannersSliderProps {
-    banners: any[]
+    banners: JSX.Element[];
 }
 
 const BannersSlider = ({ banners }: BannersSliderProps) => {
@@ -20,10 +21,10 @@ const BannersSlider = ({ banners }: BannersSliderProps) => {
                 className="w-full pb-10"
                 pagination={{ clickable: true }}
             >
-                {banners.map(banner => (
-                    <SwiperSlide key={banner.key} className="!w-11/12">
+                {banners.map((banner, index) => (
+                    <SwiperSlide key={index} className="!w-11/12">
                         <div
-                            className="h-32 rounded-xl overflow-hidden flex cursor-pointer hover:scale-[1.03] transition-transform"
+                            className="shadow-md h-32 rounded-xl overflow-hidden flex cursor-pointer hover:scale-[1.03] transition-transform"
                         >
                             {banner}
                         </div>
@@ -31,7 +32,7 @@ const BannersSlider = ({ banners }: BannersSliderProps) => {
                 ))}
             </Swiper>
         </div>
-    )
+    );
 }
 
-export default BannersSlider
+export default BannersSlider;

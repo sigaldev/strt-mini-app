@@ -24,34 +24,23 @@ const ProfilePage = () => {
         <OpportunitiesBanner key="opportunities" />,
     ];
 
-    const handleLogout = () => {
-        console.log("[PROFILE PAGE] Logout clicked, closing burger menu");
-        setShowBurgerMenu(false);
-    };
-
     const getInitials = () => {
         if (!profileData) return "";
-        const first = profileData.first_name?.[0] || "";
-        const last = profileData.last_name?.[0] || "";
-        const initials = `${first}${last}`;
-        console.log(`[PROFILE PAGE] Computed initials: ${initials}`);
-        return initials;
+        return `${profileData.first_name?.[0] || ""}${profileData.last_name?.[0] || ""}`;
     };
 
-    // Управление overflow при модальных окнах
     useEffect(() => {
         document.body.style.overflow = showNotifications || showBurgerMenu ? 'hidden' : 'unset';
         return () => { document.body.style.overflow = 'unset'; };
     }, [showNotifications, showBurgerMenu]);
 
-    // Fetch profile с ожиданием токена
     useEffect(() => {
         const fetchProfile = async () => {
             try {
                 const profile = await ProfileService.getProfile();
                 setProfileData(profile);
             } catch (error) {
-                console.error("[PROFILE PAGE] Failed to load profile:", error);
+                console.error("Failed to load profile:", error);
             } finally {
                 setLoading(false);
             }
@@ -59,34 +48,21 @@ const ProfilePage = () => {
         fetchProfile();
     }, []);
 
-
-    if (loading || !profileData) {
-        console.log("[PROFILE PAGE] Loading profile, showing loader");
-        return <Loader />;
-    }
-
-    console.log("[PROFILE PAGE] Rendering ProfilePage");
+    if (loading || !profileData) return <Loader />;
 
     return (
-        <div className="min-h-screen bg-[#181818] p-4 md:p-6">
-            <Header
-                setShowNotifications={setShowNotifications}
-                setShowBurgerMenu={setShowBurgerMenu}
-            />
+        <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+            <Header setShowNotifications={setShowNotifications} setShowBurgerMenu={setShowBurgerMenu} />
             <ProfileCard profileData={profileData} getInitials={getInitials} />
             <BannersSlider banners={banners} />
             <ScheduleBanner />
             <AchievementsSlider achievements={Array.isArray(profileData.achievements) ? profileData.achievements : []} />
-            <NotificationsModal
-                showNotifications={showNotifications}
-                setShowNotifications={setShowNotifications}
-            />
+            <NotificationsModal showNotifications={showNotifications} setShowNotifications={setShowNotifications} />
             <BurgerOverlay
                 showBurgerMenu={showBurgerMenu}
                 setShowBurgerMenu={setShowBurgerMenu}
                 getInitials={getInitials}
                 profileData={profileData}
-                handleLogout={handleLogout}
             />
         </div>
     );

@@ -16,7 +16,6 @@ const DiscountsPage = () => {
     const [partnerOffers, setPartnerOffers] = useState<PartnerOffer[]>([]);
     const [loading, setLoading] = useState(false);
 
-    // Пример статического кешбека недели
     const weeklyHighlight: CashbackOffer = {
         id: "weekly",
         name: "Кофе Хауз",
@@ -28,7 +27,7 @@ const DiscountsPage = () => {
     useEffect(() => {
         const fetchPartners = async () => {
             setLoading(true);
-            const partners = await DiscountService.getPartners(1); // city_id = 1 (Казань)
+            const partners = await DiscountService.getPartners(1);
             setPartnerOffers(partners);
             setLoading(false);
         };
@@ -49,7 +48,7 @@ const DiscountsPage = () => {
     const offers = activeTab === "cashback" ? filteredCashback : filteredPartners;
 
     return (
-        <div className="min-h-screen bg-[#111] py-6 px-4 md:p-6 text-gray-100">
+        <div className="min-h-screen bg-white py-6 px-4 md:p-6 text-gray-900">
             <h1 className="text-2xl font-bold mb-6">Скидки</h1>
 
             <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
@@ -61,7 +60,7 @@ const DiscountsPage = () => {
             <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
             {loading ? (
-                <div className="text-center py-12 text-gray-400">Загрузка...</div>
+                <div className="text-center py-12 text-gray-500">Загрузка...</div>
             ) : (
                 <>
                     <OffersGrid offers={offers} navigate={navigate} />

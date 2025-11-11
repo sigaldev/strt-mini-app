@@ -6,7 +6,7 @@ import star from "../../../assets/star.svg";
 const OpportunitiesBanner = () => {
     return (
         <div
-            className="relative flex w-full px-[30px] pt-[20px] h-40 rounded-xl overflow-hidden bg-cover bg-center"
+            className="text-[#fff] relative flex w-full px-[30px] pt-[20px] h-40 rounded-xl overflow-hidden bg-cover bg-center"
             style={{ backgroundImage: `url(${bg})` }}
         >
             {/* Фиолетовое покрытие поверх фона */}

@@ -1,10 +1,7 @@
 import { Outlet, NavLink } from "react-router-dom"
-import {User, Calendar, Tag, Briefcase, Moon, Sun} from 'lucide-react'
-import { useTheme } from "../contexts/ThemeContext"
+import { User, Calendar, Tag, Briefcase } from 'lucide-react'
 
 const Layout = () => {
-    const { theme, toggleTheme } = useTheme()
-
     const navItems = [
         { path: "/profile", icon: User, label: "Профиль" },
         { path: "/events", icon: Calendar, label: "Мероприятия" },
@@ -13,12 +10,12 @@ const Layout = () => {
     ]
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="min-h-screen bg-gray-50">
             {/* Desktop Sidebar */}
-            <aside className="hidden md:fixed md:left-0 md:top-0 md:h-screen md:w-64 md:flex md:flex-col md:bg-white dark:md:bg-[#1d1d1d] md:border-r md:border-gray-200 dark:md:border-gray-700">
-                <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Студент РТ</h1>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Студенческий портал</p>
+            <aside className="hidden md:fixed md:left-0 md:top-0 md:h-screen md:w-64 md:flex md:flex-col md:bg-white md:border-r md:border-gray-200">
+                <div className="p-6 border-b border-gray-200">
+                    <h1 className="text-2xl font-bold text-gray-900">Студент РТ</h1>
+                    <p className="text-sm text-gray-500 mt-1">Студенческий портал</p>
                 </div>
 
                 <nav className="flex-1 p-4 space-y-2">
@@ -29,8 +26,8 @@ const Layout = () => {
                             className={({ isActive }) =>
                                 `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                                     isActive
-                                        ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 font-medium"
-                                        : "text-[#007AFF] dark:text-[#007AFF] hover:bg-gray-50 dark:hover:bg-gray-700"
+                                        ? "bg-blue-50 text-blue-600 font-medium"
+                                        : "text-gray-700 hover:bg-gray-50"
                                 }`
                             }
                         >
@@ -39,16 +36,6 @@ const Layout = () => {
                         </NavLink>
                     ))}
                 </nav>
-
-                <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-                    <button
-                        onClick={toggleTheme}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
-                    >
-                        {theme === "light" ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
-                        <span>{theme === "light" ? "Темная тема" : "Светлая тема"}</span>
-                    </button>
-                </div>
             </aside>
 
             {/* Main Content */}
@@ -57,7 +44,7 @@ const Layout = () => {
             </main>
 
             {/* Mobile Bottom Navigation */}
-            <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-[#1d1d1d] border-t border-gray-200 dark:border-gray-700 px-2 py-2 z-50">
+            <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-2 py-2 z-50">
                 <div className="flex justify-around items-center">
                     {navItems.map((item) => (
                         <NavLink
@@ -65,7 +52,7 @@ const Layout = () => {
                             to={item.path}
                             className={({ isActive }) =>
                                 `flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-colors ${
-                                    isActive ? "text-[#007AFF] dark:text-[#007AFF]" : "text-gray-500 dark:text-gray-400"
+                                    isActive ? "text-blue-600" : "text-gray-500"
                                 }`
                             }
                         >

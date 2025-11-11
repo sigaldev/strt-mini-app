@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Search, Filter, Briefcase, MapPin, DollarSign } from "lucide-react"
-import {Button, Input} from "@maxhub/max-ui"
+import { Button, Input } from "@maxhub/max-ui"
 
 const JobsPage = () => {
     const [searchQuery, setSearchQuery] = useState("")
@@ -67,9 +67,9 @@ const JobsPage = () => {
     })
 
     return (
-        <div className="min-h-screen bg-[#111] text-gray-200 p-4 md:p-6">
+        <div className="min-h-screen bg-white text-gray-900 p-4 md:p-6">
             {/* Header */}
-            <h1 className="text-2xl font-bold text-gray-100 mb-6">Вакансии</h1>
+            <h1 className="text-2xl font-bold mb-6">Вакансии</h1>
 
             {/* Search + Filters */}
             <div className="mb-6 space-y-3">
@@ -79,11 +79,8 @@ const JobsPage = () => {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         defaultValue=""
-                        className=""
-                        iconBefore={
-                            <Search className="w-5 h-5 text-gray-500" />
-                        }
-                        mode="primary"
+                        iconBefore={<Search className="w-5 h-5 text-gray-400" />}
+                        mode="secondary"
                         placeholder="Поиск вакансий..."
                     />
                 </div>
@@ -92,10 +89,10 @@ const JobsPage = () => {
                 <button
                     onClick={() => setShowFilters(!showFilters)}
                     className="w-full md:w-auto flex items-center justify-center gap-2 px-4 py-3
-                    bg-[#1a1a1a] border border-[#222] rounded-xl hover:bg-[#222] transition-colors"
+                        bg-gray-100 border border-gray-300 rounded-xl hover:bg-gray-200 transition-colors"
                 >
-                    <Filter className="w-5 h-5 text-gray-300" />
-                    <span className="text-gray-200">Фильтры</span>
+                    <Filter className="w-5 h-5 text-gray-600" />
+                    <span className="text-gray-700">Фильтры</span>
                 </button>
 
                 {/* Filters */}
@@ -119,13 +116,13 @@ const JobsPage = () => {
                 {filteredJobs.map((job) => (
                     <div
                         key={job.id}
-                        className="bg-[#1a1a1a] rounded-2xl border border-[#222] p-6
-                        hover:shadow-lg hover:border-[#333] transition-all"
+                        className="bg-[#f5f5f5] rounded-2xl border border-gray-200 p-6
+                            hover:shadow-lg hover:border-gray-300 transition-all"
                     >
-                        <h3 className="text-lg font-semibold text-gray-100 mb-1">{job.title}</h3>
-                        <p className="text-gray-400 mb-3">{job.company}</p>
+                        <h3 className="text-lg font-semibold mb-1">{job.title}</h3>
+                        <p className="text-gray-600 mb-3">{job.company}</p>
 
-                        <div className="flex flex-wrap gap-3 text-sm text-gray-400 mb-4">
+                        <div className="flex flex-wrap gap-3 text-sm text-gray-600 mb-4">
                             <div className="flex items-center gap-1">
                                 <MapPin className="w-4 h-4" />
                                 <span>{job.location}</span>
@@ -140,7 +137,7 @@ const JobsPage = () => {
                             </div>
                         </div>
 
-                        <p className="text-gray-400 text-sm mb-4">{job.description}</p>
+                        <p className="text-gray-600 text-sm mb-4">{job.description}</p>
 
                         <Button
                             appearance="themed"
@@ -157,7 +154,7 @@ const JobsPage = () => {
             {/* Empty State */}
             {filteredJobs.length === 0 && (
                 <div className="text-center py-12">
-                    <Briefcase className="w-16 h-16 text-gray-700 mx-auto mb-4" />
+                    <Briefcase className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                     <p className="text-gray-500">Вакансии не найдены</p>
                 </div>
             )}

@@ -5,7 +5,7 @@ import '@maxhub/max-ui/dist/styles.css';
 import {MaxUI} from "@maxhub/max-ui";
 
 createRoot(document.getElementById('root')!).render(
-    <MaxUI>
+    <MaxUI colorScheme="light">
         <App />
     </MaxUI>
 )

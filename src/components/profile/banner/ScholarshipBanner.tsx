@@ -5,7 +5,7 @@ import star from "../../../assets/star.svg";
 
 const ScholarshipBanner = () => {
     return (
-        <div className="relative flex w-full px-[30px] pt-[20px] h-40 rounded-xl overflow-hidden bg-[#000]">
+        <div className="text-[#fff] relative flex w-full px-[30px] pt-[20px] h-40 rounded-xl overflow-hidden bg-[#000]">
 
             {/* Текст + стрелка */}
             <div className="z-10 space-y-2">
