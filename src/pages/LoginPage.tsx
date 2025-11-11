@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Input } from "@maxhub/max-ui";
-import AuthService from "../components/api/service/AuthService";
+import AuthService, {hasRefreshToken} from "../components/api/service/AuthService";
 
 type Logger = {
     info: (message: string, data?: unknown) => void;
@@ -27,6 +27,12 @@ const LoginPage: React.FC = () => {
     const [formData, setFormData] = useState<LoginForm>({ phone_number: "", password: "" });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string>("");
+
+    useEffect(() => {
+        if (hasRefreshToken()) {
+            navigate("/profile");
+        }
+    }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;

@@ -130,7 +130,6 @@ class AuthService {
 
             authLogger.info("Registration completed successfully", step3Response.data);
 
-            // Возвращаем только UserProfile или undefined
             return step3Response.data.user;
         } catch (error: unknown) {
             const axiosError = error as AxiosError;
@@ -172,3 +171,7 @@ class AuthService {
 }
 
 export default new AuthService();
+
+export const hasRefreshToken = () => {
+    return document.cookie.split("; ").some((row) => row.startsWith("STRT_MAX_REFRESH_TOKEN="));
+};

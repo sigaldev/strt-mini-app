@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Camera } from "lucide-react";
 import { Input, Button } from "@maxhub/max-ui";
-import AuthService from "../components/api/service/AuthService";
+import AuthService, {hasRefreshToken} from "../components/api/service/AuthService";
 
 type Logger = {
     info: (message: string, data?: unknown) => void;
@@ -40,6 +40,12 @@ const RegisterPage: React.FC = () => {
     });
     const [errors, setErrors] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (hasRefreshToken()) {
+            navigate("/profile");
+        }
+    }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, files } = e.target;
@@ -84,9 +90,10 @@ const RegisterPage: React.FC = () => {
                 formData.group_number,
                 formData.avatar || undefined
             );
-            logger.info("Registration successful, navigating to login page");
-            navigate("/login");
-        } catch (err: unknown) {
+
+            logger.info("Registration successful, redirecting to profile");
+            navigate("/profile");
+        } catch (err) {
             logger.error("Registration failed", err);
             setErrors(["Ошибка регистрации. Попробуйте снова."]);
         } finally {
