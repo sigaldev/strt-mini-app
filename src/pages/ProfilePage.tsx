@@ -12,11 +12,11 @@ import OpportunitiesBanner from "../components/profile/banner/OpportunitiesBanne
 import { ProfileService, type Profile } from "../components/api/service/ProfileService.ts";
 import Loader from "../components/Loader.tsx";
 
-
 const ProfilePage = () => {
     const [showNotifications, setShowNotifications] = useState(false);
     const [showBurgerMenu, setShowBurgerMenu] = useState(false);
     const [profileData, setProfileData] = useState<Profile | null>(null);
+    const [loading, setLoading] = useState(true);
 
     const banners = [
         <CareerBanner key="career" />,
@@ -38,31 +38,30 @@ const ProfilePage = () => {
         return initials;
     };
 
+    // Управление overflow при модальных окнах
     useEffect(() => {
-        console.log(`[PROFILE PAGE] Overflow set to: ${showNotifications || showBurgerMenu ? 'hidden' : 'unset'}`);
         document.body.style.overflow = showNotifications || showBurgerMenu ? 'hidden' : 'unset';
-        return () => {
-            document.body.style.overflow = 'unset';
-            console.log("[PROFILE PAGE] Overflow reset to 'unset'");
-        };
+        return () => { document.body.style.overflow = 'unset'; };
     }, [showNotifications, showBurgerMenu]);
 
+    // Fetch profile с ожиданием токена
     useEffect(() => {
         const fetchProfile = async () => {
-            console.log("[PROFILE PAGE] Fetching profile...");
             try {
                 const profile = await ProfileService.getProfile();
                 setProfileData(profile);
-                console.log("[PROFILE PAGE] Profile loaded successfully:", profile);
             } catch (error) {
                 console.error("[PROFILE PAGE] Failed to load profile:", error);
+            } finally {
+                setLoading(false);
             }
         };
         fetchProfile();
     }, []);
 
-    if (!profileData) {
-        console.log("[PROFILE PAGE] Profile data not loaded yet, showing loader");
+
+    if (loading || !profileData) {
+        console.log("[PROFILE PAGE] Loading profile, showing loader");
         return <Loader />;
     }
 
@@ -71,14 +70,8 @@ const ProfilePage = () => {
     return (
         <div className="min-h-screen bg-[#181818] p-4 md:p-6">
             <Header
-                setShowNotifications={(value) => {
-                    console.log(`[PROFILE PAGE] Set showNotifications: ${value}`);
-                    setShowNotifications(value);
-                }}
-                setShowBurgerMenu={(value) => {
-                    console.log(`[PROFILE PAGE] Set showBurgerMenu: ${value}`);
-                    setShowBurgerMenu(value);
-                }}
+                setShowNotifications={setShowNotifications}
+                setShowBurgerMenu={setShowBurgerMenu}
             />
             <ProfileCard profileData={profileData} getInitials={getInitials} />
             <BannersSlider banners={banners} />
@@ -86,17 +79,11 @@ const ProfilePage = () => {
             <AchievementsSlider achievements={Array.isArray(profileData.achievements) ? profileData.achievements : []} />
             <NotificationsModal
                 showNotifications={showNotifications}
-                setShowNotifications={(value) => {
-                    console.log(`[PROFILE PAGE] Notifications modal set: ${value}`);
-                    setShowNotifications(value);
-                }}
+                setShowNotifications={setShowNotifications}
             />
             <BurgerOverlay
                 showBurgerMenu={showBurgerMenu}
-                setShowBurgerMenu={(value) => {
-                    console.log(`[PROFILE PAGE] Burger overlay set: ${value}`);
-                    setShowBurgerMenu(value);
-                }}
+                setShowBurgerMenu={setShowBurgerMenu}
                 getInitials={getInitials}
                 profileData={profileData}
                 handleLogout={handleLogout}
