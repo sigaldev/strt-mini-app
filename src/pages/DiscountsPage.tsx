@@ -47,7 +47,8 @@ const DiscountsPage = () => {
                     .map(p => ({
                         id: String(p.id),
                         name: p.name,
-                        type: p.short_partner_description,
+                        type: p.short_partner_description || "Партнер",
+                        short_partner_description: p.short_partner_description,
                         logo: p.logo_url?.medium?.url || undefined,
                         cashback: p.discount ? `${p.discount}%` : "0%",
                     }));
@@ -61,6 +62,7 @@ const DiscountsPage = () => {
                         city: p.city,
                         partner_description: p.partner_description,
                         short_partner_description: p.short_partner_description,
+                        discount: typeof p.discount === "number" ? `${p.discount}%` : p.discount,
                         logo: p.logo_url?.medium?.url || undefined,
                         site_link: p.site_link,
                         addresses: p.addresses,
@@ -83,16 +85,19 @@ const DiscountsPage = () => {
         fetchOffers();
     }, []);
 
+    const normalizedQuery = searchQuery.toLowerCase();
+
     const filteredCashback = cashbackOffers.filter(o =>
-        o.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        o.type.toLowerCase().includes(searchQuery.toLowerCase())
+        o.name.toLowerCase().includes(normalizedQuery) ||
+        o.type.toLowerCase().includes(normalizedQuery)
     );
 
-    const filteredPartners = partnerOffers.filter(o =>
-        o.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        o.short_partner_description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        o.city?.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredPartners = partnerOffers.filter(o => {
+        const matchesName = o.name.toLowerCase().includes(normalizedQuery);
+        const matchesShort = o.short_partner_description?.toLowerCase().includes(normalizedQuery) ?? false;
+        const matchesCity = o.city?.name?.toLowerCase().includes(normalizedQuery) ?? false;
+        return matchesName || matchesShort || matchesCity;
+    });
 
     const offers = activeTab === "cashback" ? filteredCashback : filteredPartners;
 
