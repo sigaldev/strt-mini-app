@@ -1,22 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import icoMero from "../assets/mero/ico-1.svg";
-import ico1 from "../assets/achivments/ico-1.svg";
-import ico2 from "../assets/achivments/ico-2.svg";
-import ico3 from "../assets/achivments/ico-3.svg";
 import meroBg from "../assets/mero/meroBg.png";
 import { Button } from "@maxhub/max-ui";
+import EventService from "../components/api/service/EventService.ts";
+import Loader from "../components/Loader.tsx";
 
 const EventsPage = () => {
     const navigate = useNavigate();
     const [showRarityInfo, setShowRarityInfo] = useState(false);
-
-    const events = [
-        { id: 1, title: "Хакатон по ИИ", image: ico1, points: 200, rarity: "Уникальный" },
-        { id: 2, title: "Конференция по кибербезопасности", image: ico2, points: 150, rarity: "Редкий" },
-        { id: 3, title: "Мастер-класс по веб-разработке", image: ico3, points: 100, rarity: "Возвышающий" },
-        { id: 4, title: "Олимпиада по программированию", image: ico1, points: 250, rarity: "Легендарный" },
-    ];
+    const [events, setEvents] = useState<Event[]>([]);
+    const [loading, setLoading] = useState(true);
 
     const rarityLevels = [
         { name: "Возвышающий", points: 100, color: "text-gray-500" },
@@ -25,6 +19,31 @@ const EventsPage = () => {
         { name: "Легендарный", points: 250, color: "text-amber-500" },
     ];
 
+    useEffect(() => {
+        const fetchEvents = async () => {
+            try {
+                setLoading(true);
+                const data = await EventService.getEvents(1, 20);
+                console.log("Fetched events:", data);
+
+                if (!data?.events) {
+                    console.warn("No events found in response!", data);
+                }
+
+                setEvents(data?.events || []);
+            } catch (err) {
+                console.error("Ошибка при загрузке мероприятий", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchEvents();
+    }, []);
+
+
+
+    if (loading) return <Loader/>;
+
     return (
         <div className="min-h-screen bg-white p-4 md:p-6">
             {/* Header */}
@@ -32,7 +51,7 @@ const EventsPage = () => {
                 <Button mode="link" onClick={() => setShowRarityInfo(true)}>
                     Подробнее
                 </Button>
-                <h1 className="absolute left-1/2 -translate-x-1/2 text-gray-900 font-bold">
+                <h1 className="absolute left-1/2 -translate-x-1/2 text-gray-900 font-bold text-xl">
                     Мероприятия
                 </h1>
             </div>
@@ -57,20 +76,20 @@ const EventsPage = () => {
             {/* Events Grid */}
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Все мероприятия</h3>
             <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                {events.map((event) => (
+                {events?.map((event) => (
                     <div
                         key={event.id}
                         onClick={() => navigate(`/events/${event.id}`)}
                         className="bg-[#f5f5f5] rounded-xl shadow-sm p-4
                         flex flex-col items-center justify-center cursor-pointer
-                         hover:shadow-lg hover:scale-105 transition-transform"
+                        hover:shadow-lg hover:scale-105 transition-transform"
                     >
-                        <img src={event.image} alt="" className="w-20 h-20 mb-2" />
+                        <img src={event.head.logo.thumb} alt="" className="w-20 h-20 mb-2" />
                         <h3 className="text-center text-sm font-medium text-gray-900 mb-1">
-                            {event.title}
+                            {event.head.short_title}
                         </h3>
                         <span className="text-blue-600 text-sm">
-                            {event.points} баллов
+                            {event.head.score} баллов
                         </span>
                     </div>
                 ))}
