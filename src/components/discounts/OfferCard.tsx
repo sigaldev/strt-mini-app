@@ -87,7 +87,7 @@ const OfferCard: React.FC<Props> = ({ offer, onClick }) => {
             onKeyDown={handleKeyDown}
             role="button"
             tabIndex={0}
-            className="w-full max-w-[374px] cursor-pointer rounded-[24px] border border-[#EAECF5] bg-white px-4 py-2 shadow-[0px_10px_28px_rgba(15,23,42,0.06)] transition-all hover:-translate-y-0.5 hover:shadow-[0px_18px_36px_rgba(15,23,42,0.09)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7F56D9]"
+            className="w-full cursor-pointer rounded-[24px] border border-[#EAECF5] bg-white px-4 py-2 shadow-[0px_10px_28px_rgba(15,23,42,0.06)] transition-all hover:-translate-y-0.5 hover:shadow-[0px_18px_36px_rgba(15,23,42,0.09)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7F56D9]"
         >
             <div className="flex items-center gap-[14px]">
                 {renderLogo()}

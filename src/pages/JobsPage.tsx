@@ -116,7 +116,7 @@ const JobsPage = () => {
 
     return (
         <div className="min-h-screen bg-[#F7F7FB]">
-            <div className="mx-auto flex w-full max-w-[420px] flex-col gap-6 px-4 py-6">
+            <div className="mx-auto flex w-full flex-col gap-6 px-4 py-6">
                 <header className="space-y-1">
                     <h1 className="text-3xl font-bold leading-tight text-[#1B1B29]">
                         Вакансии

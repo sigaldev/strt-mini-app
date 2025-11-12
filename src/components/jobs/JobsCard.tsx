@@ -1,5 +1,6 @@
 import { forwardRef } from "react";
 import type { Vacancy } from "../api/service/VacanciesService.ts";
+import {Button} from "@maxhub/max-ui";
 
 const formatText = (text?: string) =>
     text
@@ -53,7 +54,7 @@ const JobsCard = forwardRef<HTMLDivElement, JobsCardProps>(
         return (
             <article
                 ref={ref}
-                className="mx-auto w-full max-w-[343px] rounded-[15px] border border-[#ECECF5]
+                className="mx-auto w-full  rounded-[15px] border border-[#ECECF5]
                     bg-white p-5 shadow-[0_18px_40px_rgba(10,18,61,0.04)] transition-shadow
                     hover:shadow-[0_20px_45px_rgba(10,18,61,0.08)]"
             >
@@ -87,23 +88,20 @@ const JobsCard = forwardRef<HTMLDivElement, JobsCardProps>(
 
                     <div className="flex flex-wrap items-center gap-3">
                         {job.site && expanded && (
-                            <a
-                                href={job.site}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="rounded-full border border-transparent bg-[#7848FF]
-                                    px-4 py-1.5 text-xs font-semibold text-white transition
-                                    hover:bg-[#6a3de4]"
+                            <Button
+                                size="medium"
+                                onClick={() => window.open(job.site, "_blank", "noopener,noreferrer")}
                             >
                                 Перейти к вакансии
-                            </a>
+                            </Button>
                         )}
+
 
                         {canExpand && (
                             <button
                                 type="button"
                                 onClick={onToggle}
-                                className="text-sm font-semibold text-[#7848FF] hover:underline"
+                                className="text-sm font-semibold text-[#007AFF] hover:underline"
                             >
                                 {expanded ? "Скрыть" : "Подробнее..."}
                             </button>
