@@ -75,22 +75,37 @@ const EventsPage = () => {
 
             {/* Events Grid */}
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Все мероприятия</h3>
-            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 justify-items-center">
                 {events?.map((event) => (
                     <div
                         key={event.id}
                         onClick={() => navigate(`/events/${event.id}`)}
-                        className="bg-[#f5f5f5] rounded-xl shadow-sm p-4
-                        flex flex-col items-center justify-center cursor-pointer
-                        hover:shadow-lg hover:scale-105 transition-transform"
+                        className="bg-white rounded-[28px] shadow-[2px_3px_14px_rgba(116,116,116,0.43)] w-[155px] h-[155px]
+                        px-3 pt-5 pb-4 flex flex-col items-center text-center cursor-pointer overflow-hidden gap-2
+                        hover:shadow-xl hover:-translate-y-1 transition-all duration-200"
                     >
-                        <img src={event.head.logo.thumb} alt="" className="w-20 h-20 mb-2" />
-                        <h3 className="text-center text-sm font-medium text-gray-900 mb-1">
-                            {event.head.short_title}
-                        </h3>
-                        <span className="text-blue-600 text-sm">
-                            {event.head.score} баллов
-                        </span>
+                        <div
+                            className="w-[52px] h-[52px] p-[2px] rounded-full"
+                            style={{
+                                backgroundImage: "linear-gradient(180deg, #7848FF 0%, #000000 100%)"
+                            }}
+                        >
+                            <div className="w-full h-full rounded-full overflow-hidden bg-white">
+                                <img
+                                    src={event.head.logo.thumb}
+                                    alt=""
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+                        </div>
+                        <div className="flex-1 flex flex-col items-center justify-center w-full">
+                            <h3 className="text-sm font-semibold text-gray-900 leading-tight w-full px-1 break-words">
+                                {event.head.short_title}
+                            </h3>
+                            <span className="text-gray-500 text-sm mt-2">
+                                {event.head.score} баллов
+                            </span>
+                        </div>
                     </div>
                 ))}
             </div>
