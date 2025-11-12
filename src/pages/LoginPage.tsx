@@ -104,6 +104,7 @@ const LoginPage: React.FC = () => {
 
                     <Button
                         type="submit"
+                        size="large"
                         className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:scale-[1.02] transition-transform text-white"
                         loading={loading}
                     >

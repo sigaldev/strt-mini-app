@@ -79,6 +79,8 @@ class AuthService {
         first_name: string,
         last_name: string,
         group_number: string,
+        university_id: string,
+        group_id: string,
         avatar?: File
     ): Promise<UserProfile | undefined> {
         authLogger.info("Starting registration process", {
@@ -107,8 +109,8 @@ class AuthService {
             formData.append("first_name", first_name.replace(/[^A-Za-zА-Яа-яЁё]/g, ""));
             formData.append("last_name", last_name.replace(/[^A-Za-zА-Яа-яЁё]/g, ""));
             formData.append("group_number", group_number);
-            formData.append("group_id", "");
-            formData.append("university_id", "1");
+            formData.append("university_id", String(university_id));
+            formData.append("group_id", String(group_id));
             if (avatar) formData.append("avatar", avatar);
 
             const step3Response: AxiosResponse<SignUpStep3Response> = await api.post(
