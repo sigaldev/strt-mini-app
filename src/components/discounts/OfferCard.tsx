@@ -1,8 +1,7 @@
-import type { Offer } from "./types";
-import { Percent } from "lucide-react";
+import type { PartnerOffer, CashbackOffer } from "./types";
 
 interface Props {
-    offer: Offer;
+    offer: PartnerOffer | CashbackOffer;
     onClick: () => void;
 }
 
@@ -10,18 +9,23 @@ const OfferCard: React.FC<Props> = ({ offer, onClick }) => {
     return (
         <div
             onClick={onClick}
-            className="bg-[#f5f5f5] rounded-2xl p-6 cursor-pointer shadow-sm hover:shadow-md transition-all"
+            className="border rounded-lg p-4 hover:shadow-md cursor-pointer transition"
         >
-            <div className="text-6xl mb-4 text-center">{offer.logo}</div>
-            <h3 className="font-semibold text-gray-900 text-center mb-1">{offer.name}</h3>
-            <p className="text-sm text-gray-500 text-center mb-3">{offer.type}</p>
-
-            <div className="flex items-center justify-center gap-2 p-3 bg-white rounded-lg shadow-sm">
-                <Percent className="w-5 h-5 text-amber-500" />
-                <span className="text-amber-500 font-bold">
-                    {"cashback" in offer ? offer.cashback : offer.discount}
-                </span>
+            <div className="flex items-center justify-between mb-2">
+                <h3 className="font-bold text-lg">{offer.name}</h3>
+                {"logo" in offer && offer.logo && <span className="text-2xl">{
+                    <img src={offer.logo} alt=""/>
+                }</span>}
             </div>
+            {"type" in offer && <p className="text-gray-600 text-sm mb-2">{offer.type}</p>}
+            {"short_partner_description" in offer && (
+                <p className="text-gray-600 text-sm mb-2">{offer.short_partner_description}</p>
+            )}
+            {"partner_description" in offer && (
+                <p className="text-gray-500 text-xs line-clamp-3">{offer.partner_description}</p>
+            )}
+            {"city" in offer && <p className="mt-2 text-gray-400 text-xs">Город: {offer.city.name}</p>}
+            {"cashback" in offer && <p className="mt-2 text-green-600 font-bold">{offer.cashback} кешбек</p>}
         </div>
     );
 };

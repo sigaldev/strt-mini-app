@@ -1,4 +1,3 @@
-// Tabs.tsx
 import { Button } from "@maxhub/max-ui";
 import { CreditCard, Percent } from "lucide-react";
 import type { TabType } from "./types";
@@ -29,7 +28,6 @@ const Tabs: React.FC<Props> = ({ activeTab, setActiveTab }) => {
                 >
                     {tab.label}
                 </Button>
-
             ))}
         </div>
     );

@@ -1,10 +1,10 @@
-import type {Offer} from "./types"
-import OfferCard from "./OfferCard"
-import type {NavigateFunction} from "react-router-dom"
+import OfferCard from "./OfferCard";
+import type { NavigateFunction } from "react-router-dom";
+import type {Offer} from "./types.ts";
 
 interface Props {
-    offers: Offer[]
-    navigate: NavigateFunction
+    offers: Offer[];
+    navigate: NavigateFunction;
 }
 
 const OffersGrid: React.FC<Props> = ({ offers, navigate }) => {
@@ -18,7 +18,7 @@ const OffersGrid: React.FC<Props> = ({ offers, navigate }) => {
                 />
             ))}
         </div>
-    )
-}
+    );
+};
 
-export default OffersGrid
+export default OffersGrid;
