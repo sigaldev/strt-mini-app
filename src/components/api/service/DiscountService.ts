@@ -51,6 +51,19 @@ class DiscountService {
             return [];
         }
     }
+
+    async getPartnerById(id: number) {
+        discountLogger.info(`Fetching partner with ID: ${id}`);
+        try {
+            const response = await api.get(`/api/v1/partners/${id}`);
+            discountLogger.info(`Partner data received:`, response.data);
+            return response.data;
+        } catch (error: any) {
+            discountLogger.error(`Error fetching partner ${id}:`, error?.response?.data || error);
+            throw error;
+        }
+    }
+
 }
 
 export default new DiscountService();
