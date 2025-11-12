@@ -2,8 +2,8 @@ import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { ChevronLeft, UserPlus, UserCheck } from "lucide-react"
 import Loader from "../components/Loader"
-
-import AchievementsSlider from "../components/userprofile/AchievementsSlider.tsx";
+import RatingService from "../components/api/service/RatingService.ts"
+import AchievementsSlider from "../components/userprofile/AchievementsSlider.tsx"
 
 const UserProfilePage = () => {
     const { id } = useParams()
@@ -13,38 +13,30 @@ const UserProfilePage = () => {
     const [user, setUser] = useState<any>(null)
     const [requestSent, setRequestSent] = useState(false)
 
-    // Mock data — замени на ProfileService.getUserById(id)
     useEffect(() => {
         const fetchUser = async () => {
-            setLoading(true)
-
-            await new Promise(res => setTimeout(res, 500))
-
-            const mock = {
-                first_name: "Алексей",
-                last_name: "Иванов",
-                avatar: "АИ",
-                university: { name: "МГУ им. Ломоносова" },
-                group: { name: "ПМ-301" },
-                connects: 24,
-                score: 1180,
-                level: { scores_count: 2450 },
-                bio: "Студент 3 курса факультета прикладной математики.",
-                achievements: [
-                    // {
-                    //     id: 1,
-                    //     icon: notAchiveImg,
-                    //     name: "Лучший студент"
-                    // }
-                ]
+            if (!id) {
+                console.warn("UserProfilePage: No ID in params");
+                return;
             }
 
-            setUser(mock)
-            setLoading(false)
-        }
+            console.log("UserProfilePage: fetching user with ID:", id);
+            setLoading(true);
 
-        fetchUser()
-    }, [id])
+            try {
+                const data = await RatingService.getUserById(Number(id));
+                console.log("UserProfilePage: user data fetched:", data);
+                setUser(data.user);
+            } catch (err) {
+                console.error("UserProfilePage: error loading user profile:", err);
+            } finally {
+                setLoading(false);
+                console.log("UserProfilePage: loading finished");
+            }
+        };
+
+        fetchUser();
+    }, [id]);
 
     const getInitials = () => {
         if (!user) return ""
@@ -55,7 +47,6 @@ const UserProfilePage = () => {
 
     return (
         <div className="min-h-screen bg-gray-50 p-4 md:p-6">
-
             {/* Header */}
             <div className="flex items-center mb-6 relative mt-2">
                 <button
@@ -77,9 +68,9 @@ const UserProfilePage = () => {
                         {user.first_name} {user.last_name}
                     </h2>
                     <div className="flex gap-[5px] justify-center text-gray-500 text-sm">
-                        <p>{user.university?.name || "–"}</p>
+                        <p>{user.university?.abbreviation || "–"}</p>
                         <p>|</p>
-                        <p>Группа: {user.group?.name || "–"}</p>
+                        <p>Группа: {user.group?.name || user.group_number || "–"}</p>
                     </div>
                     {user.bio && (
                         <p className="text-gray-700 text-sm max-w-[300px]">{user.bio}</p>

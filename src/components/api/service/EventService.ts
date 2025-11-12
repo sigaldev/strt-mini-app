@@ -32,7 +32,7 @@ class EventService {
                 params: { page, per_page },
             }
         );
-        console.log("EventService.getEvents response:", resp); // <-- логируем ответ
+        console.log("EventService.getEvents response:", resp);
         return resp.data;
     }
 }

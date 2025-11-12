@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, ChevronLeft, Trophy, TrendingUp } from "lucide-react";
-import {Button, Input} from "@maxhub/max-ui";
+import { Button, Input } from "@maxhub/max-ui";
+import RatingService, { type User } from "../components/api/service/RatingService.ts";
 
 interface Student {
     id: number;
@@ -16,37 +17,65 @@ const RatingPage = () => {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState<"overall" | "season">("overall");
     const [searchQuery, setSearchQuery] = useState("");
+    const [students, setStudents] = useState<Student[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
 
-    const overallRating: Student[] = [
-        { id: 1, name: "Иванов Алексей", university: "МГУ им. Ломоносова", group: "ПМ-301", points: 2450, avatar: "АИ" },
-        { id: 2, name: "Петрова Мария", university: "КФУ", group: "ИВТ-201", points: 2380, avatar: "ПМ" },
-        { id: 3, name: "Сидоров Дмитрий", university: "КНИТУ", group: "ПО-402", points: 2310, avatar: "СД" },
-        { id: 4, name: "Козлова Анна", university: "КГЭУ", group: "ИБ-301", points: 2245, avatar: "КА" },
-        { id: 5, name: "Морозов Игорь", university: "КГАСУ", group: "СТ-203", points: 2180, avatar: "МИ" },
-    ];
+    const fetchUsers = useCallback(async (newPage = 1) => {
+        if (!hasMore && newPage !== 1) return;
+        try {
+            setLoading(true);
+            console.log(`RatingPage: fetching users page ${newPage}...`);
+            const response = await RatingService.getUsers(newPage, 50, searchQuery);
+            console.log("RatingPage: users fetched:", response);
 
-    const seasonRating: Student[] = [
-        { id: 2, name: "Петрова Мария", university: "КФУ", group: "ИВТ-201", points: 1250, avatar: "ПМ" },
-        { id: 1, name: "Иванов Алексей", university: "МГУ им. Ломоносова", group: "ПМ-301", points: 1180, avatar: "АИ" },
-    ];
+            const studentsData: Student[] = response.users.map((u: User) => ({
+                id: u.id,
+                name: u.full_name || `${u.first_name} ${u.last_name}`,
+                university: u.university?.name || "-",
+                group: u.group_number || "-",
+                points: u.score || 0,
+                avatar: u.avatar?.medium || "",
+            }));
 
-    const currentRating = activeTab === "overall" ? overallRating : seasonRating;
+            setStudents(prev => (newPage === 1 ? studentsData : [...prev, ...studentsData]));
+            setHasMore(response.users.length === 50); // если меньше 50 — значит больше нет
+            setPage(newPage);
+        } catch (err) {
+            console.error("RatingPage: error fetching users", err);
+        } finally {
+            setLoading(false);
+        }
+    }, [searchQuery, hasMore]);
 
-    const filteredStudents = currentRating.filter((student) =>
+    // Перезагрузка при изменении searchQuery или активной вкладки
+    useEffect(() => {
+        setStudents([]);
+        setPage(1);
+        setHasMore(true);
+        fetchUsers(1);
+    }, [searchQuery, activeTab, fetchUsers]);
+
+    // Обработчик скролла для бесконечной ленты
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 300 && !loading && hasMore) {
+                fetchUsers(page + 1);
+            }
+        };
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, [loading, hasMore, page, fetchUsers]);
+
+    const filteredStudents = students.filter(student =>
         student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         student.university.toLowerCase().includes(searchQuery.toLowerCase()) ||
         student.group.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const getPositionColor = (pos: number) => {
-        if (pos === 1) return "from-amber-400 to-amber-500";
-        if (pos === 2) return "from-gray-300 to-gray-400";
-        if (pos === 3) return "from-orange-400 to-orange-500";
-        return "from-blue-500 to-blue-600";
-    };
-
     return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen bg-gray-50">
             {/* Header */}
             <div className="bg-white sticky top-0 z-10 shadow-sm">
                 <div className="p-4 flex items-center gap-3">
@@ -56,25 +85,19 @@ const RatingPage = () => {
                     >
                         <ChevronLeft className="w-6 h-6 text-gray-900" />
                     </button>
-
                     <h1 className="text-xl font-semibold text-gray-900">Рейтинг</h1>
                 </div>
 
                 {/* Search */}
                 <div className="px-4 pb-4">
-                    <div className="relative">
-
-                        <Input
-                            mode="secondary"
-                            type="text"
-                            iconBefore={
-                                <Search className=" w-5 h-5 text-gray-400" />
-                            }
-                            placeholder="Поиск по имени, вузу или группе…"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                    </div>
+                    <Input
+                        mode="secondary"
+                        type="text"
+                        iconBefore={<Search className="w-5 h-5 text-gray-400" />}
+                        placeholder="Поиск по имени, вузу или группе…"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
 
                     {/* Tabs */}
                     <div className="flex gap-2 mt-4">
@@ -88,7 +111,6 @@ const RatingPage = () => {
                         >
                             Общий рейтинг
                         </Button>
-
                         <Button
                             appearance={activeTab === "season" ? "themed" : "neutral"}
                             mode="primary"
@@ -105,65 +127,44 @@ const RatingPage = () => {
 
             {/* Rating List */}
             <div className="p-4 space-y-3">
-                {filteredStudents.length === 0 ? (
-                    <div className="text-center py-12 text-gray-500">
-                        Ничего не найдено
-                    </div>
+                {students.length === 0 && loading ? (
+                    <div className="text-center py-12 text-gray-500">Загрузка...</div>
+                ) : filteredStudents.length === 0 ? (
+                    <div className="text-center py-12 text-gray-500">Ничего не найдено</div>
                 ) : (
                     filteredStudents.map((student, index) => {
                         const position = index + 1;
-
                         return (
                             <div
                                 key={student.id}
                                 onClick={() => navigate(`/user/${student.id}`)}
-                                className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition cursor-pointer"
+                                className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition cursor-pointer flex items-center gap-4"
                             >
-                                <div className="flex items-center gap-4">
-                                    {/* Position */}
-                                    <div
-                                        className={`
-                                            w-12 h-12 rounded-xl flex items-center justify-center
-                                            text-white text-lg font-bold bg-gradient-to-br
-                                            ${getPositionColor(position)}
-                                        `}
-                                    >
-                                        {position <= 3 ? (
-                                            <Trophy className="w-5 h-5 text-white" />
-                                        ) : (
-                                            position
-                                        )}
-                                    </div>
-
-                                    {/* Avatar */}
-                                    <div className="w-14 h-14 bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold">
-                                        {student.avatar}
-                                    </div>
-
-                                    {/* Info */}
-                                    <div className="flex-1 min-w-0">
-                                        <h3 className="text-base font-semibold text-gray-900 truncate">
-                                            {student.name}
-                                        </h3>
-                                        <p className="text-sm text-gray-600 truncate">
-                                            {student.university}
-                                        </p>
-                                        <p className="text-xs text-gray-500">
-                                            Группа: {student.group}
-                                        </p>
-                                    </div>
-
-                                    {/* Points */}
-                                    <div className="text-right">
-                                        <div className="text-lg text-[#0177ff]">
-                                            {student.points}
-                                        </div>
-                                        <div className="text-xs text-gray-500">баллов</div>
-                                    </div>
+                                <div className="w-14 h-14 rounded-full overflow-hidden flex items-center justify-center">
+                                    <img
+                                        src={student.avatar}
+                                        alt={student.name}
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+                                <div className="text-[#0177ff] font-bold text-lg w-6 text-center">
+                                    {position}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <h3 className="text-base font-semibold text-gray-900 truncate">{student.name}</h3>
+                                    <p className="text-sm text-gray-600 truncate">
+                                        {student.university} | {student.group}
+                                    </p>
+                                </div>
+                                <div className="text-right">
+                                    <div className="text-xl font-semibold text-[#0177ff]">{student.points}</div>
                                 </div>
                             </div>
                         );
                     })
+                )}
+                {loading && students.length > 0 && (
+                    <div className="text-center py-4 text-gray-500">Загрузка ещё...</div>
                 )}
             </div>
         </div>
