@@ -1,94 +1,116 @@
 import { forwardRef } from "react";
-import { Briefcase, ChevronDown, ChevronRight, DollarSign } from "lucide-react";
-import { Button } from "@maxhub/max-ui";
+import type { Vacancy } from "../api/service/VacanciesService.ts";
 
 const formatText = (text?: string) =>
     text
         ?.split(";")
         .map((p) => p.trim())
         .filter(Boolean)
-        .join(";\n") ?? "";
+        .join("\n")
+        .trim() ?? "";
 
-const JobsCard = forwardRef<HTMLDivElement, any>(
+const formatSalary = (salaryFrom?: number, salaryTo?: number) => {
+    if (!salaryFrom && !salaryTo) return "";
+    const formatter = new Intl.NumberFormat("ru-RU");
+    if (salaryFrom && salaryTo && salaryFrom !== salaryTo) {
+        return `${formatter.format(salaryFrom)} – ${formatter.format(salaryTo)} ₽`;
+    }
+    const value = salaryFrom ?? salaryTo;
+    return value ? `${formatter.format(value)} ₽` : "";
+};
+
+const buildDetails = (job: Vacancy) =>
+    [
+        formatText(job.requirements),
+        formatText(job.responsibilities),
+        formatText(job.work_conditions),
+        formatText(job.additional_info)
+    ]
+        .filter(Boolean)
+        .join("\n\n");
+
+type JobsCardProps = {
+    job: Vacancy;
+    expanded: boolean;
+    onToggle: () => void;
+};
+
+const JobsCard = forwardRef<HTMLDivElement, JobsCardProps>(
     ({ job, expanded, onToggle }, ref) => {
+        const experience =
+            job.work_experience?.trim() && job.work_experience !== "—"
+                ? job.work_experience
+                : "не требуется";
+
+        const employmentLine = [job.employment, job.schedule]
+            .filter(Boolean)
+            .join(", ");
+
+        const salary = formatSalary(job.salary_from, job.salary_to);
+        const details = buildDetails(job);
+        const canExpand = Boolean(details);
+
         return (
-            <div
+            <article
                 ref={ref}
-                className="bg-[#f5f5f5] rounded-2xl border border-gray-200 p-6
-                    hover:shadow-lg transition-all"
+                className="mx-auto w-full max-w-[343px] rounded-[15px] border border-[#ECECF5]
+                    bg-white p-5 shadow-[0_18px_40px_rgba(10,18,61,0.04)] transition-shadow
+                    hover:shadow-[0_20px_45px_rgba(10,18,61,0.08)]"
             >
-                <h3 className="text-lg font-semibold mb-1">{job.name}</h3>
-                <p className="text-gray-600 mb-3">{job.company_name || ""}</p>
+                <div className="flex flex-col gap-2 text-sm text-[#6F6F7B]">
+                    <h3 className="text-base font-semibold text-[#1B1B29] leading-tight">
+                        {job.name}
+                    </h3>
 
-                <div className="flex flex-wrap gap-3 text-sm text-gray-600 mb-4">
-                    {job.work_conditions && (
-                        <span className="whitespace-pre-line">
-                            {formatText(job.work_conditions)}
-                        </span>
+                    <p className="text-sm">
+                        Опыт работы:{" "}
+                        <span className="text-[#1B1B29] font-medium">{experience}</span>
+                    </p>
+
+                    {employmentLine && (
+                        <p className="text-sm text-[#6F6F7B]">{employmentLine}</p>
                     )}
 
-                    {job.salary_from && (
-                        <div className="flex items-center gap-1">
-                            <DollarSign className="w-4 h-4" />
-                            {job.salary_from} – {job.salary_to} ₽
-                        </div>
-                    )}
-
-                    {job.employment && (
-                        <div className="flex items-center gap-1">
-                            <Briefcase className="w-4 h-4" />
-                            {job.employment}
-                        </div>
+                    {salary && (
+                        <p className="text-lg font-semibold text-[#1B1B29]">{salary}</p>
                     )}
                 </div>
 
-                <p className="text-gray-600 text-sm mb-4 whitespace-pre-line">
-                    {expanded
-                        ? [
-                            formatText(job.requirements),
-                            formatText(job.responsibilities),
-                            formatText(job.additional_info)
-                        ]
-                            .filter(Boolean)
-                            .join("\n\n")
-                        : formatText(job.requirements)
-                            .split("\n")
-                            .slice(0, 3)
-                            .join("\n")}
-                </p>
+                <div className="my-4 h-px w-full bg-[#1B1B29]/20" />
 
-                <div className="flex gap-2">
-                    {!expanded ? (
-                        <Button
-                            appearance="themed"
-                            mode="primary"
-                            size="large"
-                            className="w-full"
-                            iconBefore={<ChevronDown className="w-4 h-4" />}
-                            onClick={onToggle}
-                        >
-                            Подробнее
-                        </Button>
-                    ) : (
-                        <a
-                            href={job.site || "#"}
-                            target="_blank"
-                            className="w-full"
-                            rel="noreferrer"
-                        >
-                            <Button
-                                appearance="themed"
-                                mode="primary"
-                                size="large"
-                                className="w-full"
-                                iconAfter={<ChevronRight className="w-4 h-4" />}
+                <div className="flex flex-col gap-3">
+                    {canExpand && expanded && (
+                        <p className="text-sm leading-relaxed text-[#6F6F7B] whitespace-pre-line">
+                            {details}
+                        </p>
+                    )}
+
+                    <div className="flex flex-wrap items-center gap-3">
+                        {job.site && expanded && (
+                            <a
+                                href={job.site}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="rounded-full border border-transparent bg-[#7848FF]
+                                    px-4 py-1.5 text-xs font-semibold text-white transition
+                                    hover:bg-[#6a3de4]"
                             >
-                                Перейти
-                            </Button>
-                        </a>
-                    )}
+                                Перейти к вакансии
+                            </a>
+                        )}
+
+                        {canExpand && (
+                            <button
+                                type="button"
+                                onClick={onToggle}
+                                className="text-sm font-semibold text-[#7848FF] hover:underline"
+                            >
+                                {expanded ? "Скрыть" : "Подробнее..."}
+                            </button>
+                        )}
+                    </div>
                 </div>
-            </div>
+            </article>
         );
     }
 );
