@@ -4,7 +4,8 @@ import { Input } from "@maxhub/max-ui";
 import {
     VacanciesService,
     type VacanciesFilters,
-    type Vacancy
+    type Vacancy,
+    type VacancyFilter
 } from "../components/api/service/VacanciesService.ts";
 import { FiltersPanel } from "../components/jobs/FiltersPanel.tsx";
 import JobsCard from "../components/jobs/JobsCard.tsx";
@@ -13,7 +14,7 @@ const PER_PAGE = 100;
 
 const JobsPage = () => {
     const [searchQuery, setSearchQuery] = useState("");
-    const [filtersFromServer, setFiltersFromServer] = useState([]);
+    const [filtersFromServer, setFiltersFromServer] = useState<VacancyFilter[]>([]);
     const [activeFilters, setActiveFilters] = useState<Record<string, string>>({});
     const [showFilters, setShowFilters] = useState(false);
 
@@ -114,60 +115,75 @@ const JobsPage = () => {
     });
 
     return (
-        <div className="min-h-screen bg-white p-4 md:p-6">
-            <h1 className="text-2xl font-bold mb-6">Вакансии</h1>
+        <div className="min-h-screen bg-[#F7F7FB]">
+            <div className="mx-auto flex w-full max-w-[420px] flex-col gap-6 px-4 py-6">
+                <header className="space-y-1">
+                    <h1 className="text-3xl font-bold leading-tight text-[#1B1B29]">
+                        Вакансии
+                    </h1>
+                </header>
 
-            {/* Search + Filters */}
-            <div className="space-y-3 mb-6">
-                <Input
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    iconBefore={<Search className="w-5 h-5 text-gray-400" />}
-                    mode="secondary"
-                    placeholder="Поиск вакансий..."
-                />
-
-                <button
-                    onClick={() => setShowFilters(!showFilters)}
-                    className="w-full md:w-auto flex items-center justify-center gap-2 px-4 py-3
-                        bg-gray-100 border border-gray-300 rounded-xl hover:bg-gray-200"
-                >
-                    <Filter className="w-5 h-5 text-gray-600" />
-                    Фильтры
-                </button>
-
-                {showFilters && (
-                    <FiltersPanel
-                        filters={filtersFromServer}
-                        activeFilters={activeFilters}
-                        onSelect={handleFilterSelect}
+                {/* Search + Filters */}
+                <div className="space-y-3">
+                    <Input
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        iconBefore={<Search className="w-5 h-5 text-[#9D9DB4]" />}
+                        mode="secondary"
+                        className="rounded-[20px] border border-[#E3E6F0] bg-white/80 text-sm
+                            placeholder:text-[#9D9DB4]"
+                        placeholder="Поиск вакансий..."
                     />
+
+                    <button
+                        type="button"
+                        onClick={() => setShowFilters(!showFilters)}
+                        className="flex w-full items-center justify-center gap-2 rounded-[20px]
+                            border border-[#D9DCEB] bg-white px-4 py-3 text-sm font-semibold
+                            text-[#1B1B29] shadow-sm"
+                    >
+                        <Filter className="w-5 h-5 text-[#6F6F7B]" />
+                        Фильтры
+                    </button>
+
+                    {showFilters && (
+                        <div className="rounded-2xl border border-[#ECECF5] bg-white p-3 shadow-sm">
+                            <FiltersPanel
+                                filters={filtersFromServer}
+                                activeFilters={activeFilters}
+                                onSelect={handleFilterSelect}
+                            />
+                        </div>
+                    )}
+                </div>
+
+                {/* Jobs */}
+                {filteredJobs.length === 0 && !loading ? (
+                    <div className="rounded-[20px] border border-dashed border-[#D8DAE8] bg-white
+                        px-6 py-12 text-center text-sm text-[#6F6F7B]">
+                        <Briefcase className="mx-auto mb-4 h-12 w-12 text-[#C4C6D6]" />
+                        Вакансии по текущим фильтрам не найдены
+                    </div>
+                ) : (
+                    <div className="space-y-4 pb-8">
+                        {filteredJobs.map((job, index) => (
+                            <JobsCard
+                                key={job.id ?? index}
+                                job={job}
+                                expanded={expandedIndex === index}
+                                onToggle={() => toggleExpand(index)}
+                                ref={index === filteredJobs.length - 1 ? lastJobRef : null}
+                            />
+                        ))}
+                    </div>
+                )}
+
+                {loading && (
+                    <div className="pb-8 text-center text-sm text-[#6F6F7B]">
+                        Загружаем вакансии...
+                    </div>
                 )}
             </div>
-
-            {/* Jobs */}
-            {filteredJobs.length === 0 && !loading ? (
-                <div className="text-center py-12">
-                    <Briefcase className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500">Вакансии не найдены</p>
-                </div>
-            ) : (
-                <div className="space-y-4">
-                    {filteredJobs.map((job, index) => (
-                        <JobsCard
-                            key={index}
-                            job={job}
-                            expanded={expandedIndex === index}
-                            onToggle={() => toggleExpand(index)}
-                            ref={index === filteredJobs.length - 1 ? lastJobRef : null}
-                        />
-                    ))}
-                </div>
-            )}
-
-            {loading && (
-                <div className="text-center py-6 text-gray-500">Загрузка...</div>
-            )}
         </div>
     );
 };
