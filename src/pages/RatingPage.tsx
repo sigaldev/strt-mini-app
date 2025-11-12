@@ -36,7 +36,7 @@ const RatingPage = () => {
                 university: u.university?.name || "-",
                 group: u.group_number || "-",
                 points: u.score || 0,
-                avatar: u.avatar?.medium || "",
+                avatar: u.avatar?.medium?.url || u.avatar?.large?.url || u.avatar?.thumb?.url || "",
             }));
 
             setStudents(prev => (newPage === 1 ? studentsData : [...prev, ...studentsData]));
