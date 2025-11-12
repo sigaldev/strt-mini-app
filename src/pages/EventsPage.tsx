@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import icoMero from "../assets/mero/ico-1.svg";
 import meroBg from "../assets/mero/meroBg.png";
-import { Button } from "@maxhub/max-ui";
+import { Button, Spinner } from "@maxhub/max-ui";
 import EventService from "../components/api/service/EventService.ts";
+import type { Event, EventType } from "../components/api/service/EventService.ts";
 import Loader from "../components/Loader.tsx";
 
 const EventsPage = () => {
@@ -11,6 +12,8 @@ const EventsPage = () => {
     const [showRarityInfo, setShowRarityInfo] = useState(false);
     const [events, setEvents] = useState<Event[]>([]);
     const [loading, setLoading] = useState(true);
+    const [isInitialLoad, setIsInitialLoad] = useState(true);
+    const [activeTab, setActiveTab] = useState<EventType>("event");
 
     const rarityLevels = [
         { name: "Возвышающий", points: 100, color: "text-gray-500" },
@@ -23,7 +26,7 @@ const EventsPage = () => {
         const fetchEvents = async () => {
             try {
                 setLoading(true);
-                const data = await EventService.getEvents(1, 20);
+                const data = await EventService.getEvents(1, 20, activeTab);
                 console.log("Fetched events:", data);
 
                 if (!data?.events) {
@@ -35,14 +38,18 @@ const EventsPage = () => {
                 console.error("Ошибка при загрузке мероприятий", err);
             } finally {
                 setLoading(false);
+                setIsInitialLoad(false);
             }
         };
         fetchEvents();
-    }, []);
+    }, [activeTab]);
 
+    if (loading && isInitialLoad) return <Loader/>;
 
-
-    if (loading) return <Loader/>;
+    const tabs: { id: EventType; label: string }[] = [
+        { id: "event", label: "Мероприятия" },
+        { id: "challenge", label: "Задания" },
+    ];
 
     return (
         <div className="min-h-screen bg-white p-4 md:p-6">
@@ -73,41 +80,65 @@ const EventsPage = () => {
                 </div>
             </div>
 
-            {/* Events Grid */}
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Все мероприятия</h3>
-            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 justify-items-center">
-                {events?.map((event) => (
-                    <div
-                        key={event.id}
-                        onClick={() => navigate(`/events/${event.id}`)}
-                        className="bg-white rounded-[28px] shadow-[2px_3px_14px_rgba(116,116,116,0.43)] w-[155px] h-[155px]
-                        px-3 pt-5 pb-4 flex flex-col items-center text-center cursor-pointer overflow-hidden gap-2
-                        hover:shadow-xl hover:-translate-y-1 transition-all duration-200"
+            <div className="flex gap-2 mb-5">
+                {tabs.map((tab) => (
+                    <Button
+                        key={tab.id}
+                        appearance={activeTab === tab.id ? "themed" : "neutral"}
+                        mode="primary"
+                        stretched
+                        size="medium"
+                        onClick={() => setActiveTab(tab.id)}
                     >
+                        {tab.label}
+                    </Button>
+                ))}
+            </div>
+
+            {/* Events Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 justify-items-center">
+                {loading ? (
+                    <div className="col-span-full flex justify-center py-10">
+                        <Spinner appearance="primary" size={32} />
+                    </div>
+                ) : events?.length ? (
+                    events.map((event) => (
                         <div
-                            className="w-[52px] h-[52px] p-[2px] rounded-full"
-                            style={{
-                                backgroundImage: "linear-gradient(180deg, #7848FF 0%, #000000 100%)"
-                            }}
+                            key={event.id}
+                            onClick={() => navigate(`/events/${event.id}`)}
+                            className="bg-white rounded-[28px] shadow-[2px_3px_14px_rgba(116,116,116,0.43)] w-[155px] h-[155px]
+                            px-3 pt-5 pb-4 flex flex-col items-center text-center cursor-pointer overflow-hidden gap-2
+                            hover:shadow-xl hover:-translate-y-1 transition-all duration-200"
                         >
-                            <div className="w-full h-full rounded-full overflow-hidden bg-white">
-                                <img
-                                    src={event.head.logo.thumb}
-                                    alt=""
-                                    className="w-full h-full object-cover"
-                                />
+                            <div
+                                className="w-[52px] h-[52px] p-[2px] rounded-full"
+                                style={{
+                                    backgroundImage: "linear-gradient(180deg, #7848FF 0%, #000000 100%)"
+                                }}
+                            >
+                                <div className="w-full h-full rounded-full overflow-hidden bg-white">
+                                    <img
+                                        src={event.head.logo.thumb}
+                                        alt=""
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+                            </div>
+                            <div className="flex-1 flex flex-col items-center justify-center w-full">
+                                <h3 className="text-sm font-semibold text-gray-900 leading-tight w-full px-1 break-words">
+                                    {event.head.short_title}
+                                </h3>
+                                <span className="text-gray-500 text-sm mt-2">
+                                    {event.head.score} баллов
+                                </span>
                             </div>
                         </div>
-                        <div className="flex-1 flex flex-col items-center justify-center w-full">
-                            <h3 className="text-sm font-semibold text-gray-900 leading-tight w-full px-1 break-words">
-                                {event.head.short_title}
-                            </h3>
-                            <span className="text-gray-500 text-sm mt-2">
-                                {event.head.score} баллов
-                            </span>
-                        </div>
+                    ))
+                ) : (
+                    <div className="col-span-full text-center text-gray-500 py-10">
+                        Пока нет данных для этой категории
                     </div>
-                ))}
+                )}
             </div>
 
             {/* Rarity Info Modal */}
