@@ -102,12 +102,12 @@ const UserProfilePage = () => {
                 </div>
 
                 <div className="p-4 text-center">
-                    <div className="text-2xl font-bold text-[#007AFF]">{user.score}</div>
+                    <div className="text-2xl font-bold text-[#007AFF]">{user.rank}</div>
                     <div className="text-xs text-gray-600">Рейтинг</div>
                 </div>
 
                 <div className="p-4 text-center">
-                    <div className="text-2xl font-bold text-gray-900">{user.level?.scores_count}</div>
+                    <div className="text-2xl font-bold text-gray-900">{user.score}</div>
                     <div className="text-xs text-gray-600">Баллы</div>
                 </div>
             </div>

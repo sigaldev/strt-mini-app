@@ -35,13 +35,13 @@ const ProfileCard = ({ profileData, getInitials }: ProfileCardProps) => {
                     onClick={() => navigate("/rating")}
                     className="text-center p-3 border-l border-gray-300 cursor-pointer active:scale-[0.97] transition"
                 >
-                    <div className="text-[18px] text-[#007AFF]">{profileData.score}</div>
+                    <div className="text-[18px] text-[#007AFF]">{profileData.rank}</div>
                     <div className="text-xs text-gray-400">Рейтинг</div>
                 </div>
 
                 {/* Баллы */}
                 <div className="text-center p-3 border-l border-gray-300">
-                    <div className="text-[18px] text-gray-900">{profileData.level?.scores_count || 0}</div>
+                    <div className="text-[18px] text-gray-900">{profileData.score || 0}</div>
                     <div className="text-xs text-gray-400">Баллы</div>
                 </div>
             </div>
