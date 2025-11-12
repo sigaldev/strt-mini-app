@@ -8,6 +8,8 @@ import DiscountsPage from "../pages/DiscountsPage.tsx";
 import DiscountDetailPage from "../pages/DiscountDetailPage.tsx";
 import JobsPage from "../pages/JobsPage.tsx";
 import EventDetailPage from "../pages/EventDetailPage.tsx";
+import RatingPage from "../pages/RatingPage.tsx";
+import UserProfilePage from "../pages/UserProfilePage.tsx";
 
 export const ROUTES = {
     LOGIN: "/login",
@@ -19,6 +21,8 @@ export const ROUTES = {
     DISCOUNTS: "/discounts",
     DISCOUNT_DETAIL: "/discounts/:id",
     JOBS: "/jobs",
+    RATING: "/rating",
+    USERPROFILE: "/user/:id",
 };
 
 export const routesConfig = [
@@ -37,9 +41,10 @@ export const routesConfig = [
         { path: ROUTES.DISCOUNTS, element: DiscountsPage },
         { path: ROUTES.DISCOUNT_DETAIL, element: DiscountDetailPage },
         { path: ROUTES.JOBS, element: JobsPage },
+        { path: ROUTES.RATING, element: RatingPage },
+        { path: ROUTES.USERPROFILE, element: UserProfilePage },
     ],
     },
 
-    // Не найдено
     { path: "*", element: () => <Navigate to={ROUTES.LOGIN} replace /> },
 ];

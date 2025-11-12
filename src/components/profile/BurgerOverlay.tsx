@@ -66,7 +66,7 @@ const BurgerOverlay: React.FC<BurgerOverlayProps> = ({
                                 {profileData.first_name} {profileData.last_name}
                             </h4>
                             <p className="text-gray-500 text-sm">
-                                {profileData.university?.name || "Университет не указан"}
+                                {profileData.university?.abbreviation || "Университет не указан"}
                             </p>
                         </div>
                     </div>
