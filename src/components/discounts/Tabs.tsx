@@ -9,7 +9,7 @@ interface Props {
 const Tabs: React.FC<Props> = ({ activeTab, setActiveTab }) => {
     const tabs: { id: TabType; label: string }[] = [
         { id: "cashback", label: "Кешбек по карте" },
-        { id: "partners", label: "Скидки от партнеров" }
+        { id: "partners", label: "Скидки" }
     ];
 
     return (
