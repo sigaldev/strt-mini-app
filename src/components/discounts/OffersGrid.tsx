@@ -1,6 +1,6 @@
 import OfferCard from "./OfferCard";
 import type { NavigateFunction } from "react-router-dom";
-import type {Offer} from "./types.ts";
+import type { Offer } from "./types.ts";
 
 interface Props {
     offers: Offer[];
@@ -9,7 +9,7 @@ interface Props {
 
 const OffersGrid: React.FC<Props> = ({ offers, navigate }) => {
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="flex flex-col items-center gap-[10px]">
             {offers.map((offer) => (
                 <OfferCard
                     key={offer.id}

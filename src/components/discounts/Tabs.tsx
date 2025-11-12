@@ -1,5 +1,4 @@
 import { Button } from "@maxhub/max-ui";
-import { CreditCard, Percent } from "lucide-react";
 import type { TabType } from "./types";
 
 interface Props {
@@ -8,9 +7,9 @@ interface Props {
 }
 
 const Tabs: React.FC<Props> = ({ activeTab, setActiveTab }) => {
-    const tabs: { id: TabType; label: string; icon: React.ReactNode }[] = [
-        { id: "cashback", label: "Кешбек по карте", icon: <CreditCard className="w-5 h-5 flex-shrink-0" /> },
-        { id: "partners", label: "Скидки от партнеров", icon: <Percent className="w-5 h-5 flex-shrink-0" /> }
+    const tabs: { id: TabType; label: string }[] = [
+        { id: "cashback", label: "Кешбек по карте" },
+        { id: "partners", label: "Скидки от партнеров" }
     ];
 
     return (
@@ -22,9 +21,8 @@ const Tabs: React.FC<Props> = ({ activeTab, setActiveTab }) => {
                     mode="primary"
                     size="medium"
                     stretched
-                    iconBefore={tab.icon}
                     onClick={() => setActiveTab(tab.id)}
-                    className="flex items-center gap-2 whitespace-nowrap"
+                    className="flex min-w-[160px] flex-1 items-center justify-center whitespace-normal text-center text-sm font-semibold leading-tight"
                 >
                     {tab.label}
                 </Button>
