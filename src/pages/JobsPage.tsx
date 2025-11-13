@@ -12,10 +12,17 @@ import JobsCard from "../components/jobs/JobsCard.tsx";
 
 const PER_PAGE = 100;
 
+export const FILTER_KEY_MAP: Record<string, keyof VacanciesFilters> = {
+    "Тип занятости": "employment",
+    "График работы": "schedule",
+    "Опыт работы": "work_experience",
+};
+
+
 const JobsPage = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [filtersFromServer, setFiltersFromServer] = useState<VacancyFilter[]>([]);
-    const [activeFilters, setActiveFilters] = useState<Record<string, string>>({});
+    const [activeFilters, setActiveFilters] = useState<Record<string, number | null>>({});
     const [showFilters, setShowFilters] = useState(false);
 
     const [jobs, setJobs] = useState<Vacancy[]>([]);
@@ -26,6 +33,8 @@ const JobsPage = () => {
     const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
     const observer = useRef<IntersectionObserver | null>(null);
+
+
 
     const lastJobRef = useCallback(
         (node: HTMLDivElement | null) => {
@@ -55,7 +64,6 @@ const JobsPage = () => {
         })();
     }, []);
 
-    // ✅ Загружаем вакансии при изменении фильтров или страницы
     useEffect(() => {
         const fetchVacancies = async () => {
             setLoading(true);
@@ -66,13 +74,12 @@ const JobsPage = () => {
                     per_page: PER_PAGE
                 };
 
-                // добавляем только НЕПУСТЫЕ фильтры
                 Object.entries(activeFilters).forEach(([key, value]) => {
-                    if (value) (params as any)[key] = value;
+                    if (value != null) (params as any)[key] = value; // != проверяет null и undefined
                 });
 
                 const res = await VacanciesService.getVacancies(params);
-                const list = res.vacancies || [];
+                const list = res.results || [];
 
                 setJobs((prev) => (page === 1 ? list : [...prev, ...list]));
                 setHasMore(list.length === PER_PAGE);
@@ -86,22 +93,31 @@ const JobsPage = () => {
         fetchVacancies();
     }, [page, activeFilters]);
 
-    // ✅ Раскрытие
+
     const toggleExpand = (index: number) => {
         setExpandedIndex((prev) => (prev === index ? null : index));
     };
 
-    // ✅ Обработчик выбора фильтра
-    const handleFilterSelect = (filterTitle: string, value: string) => {
-        setActiveFilters((prev) => ({
-            ...prev,
-            [filterTitle]: value === "all" ? "" : value
-        }));
+    const handleFilterSelect = (filterType: string, valueId: number | null) => {
+        setActiveFilters((prev) => {
+            const newFilters = { ...prev };
 
-        setJobs([]);
-        setPage(1);
-        setHasMore(true);
+            // Если выбрали "Все" (id === null) — сбрасываем фильтр
+            if (valueId === null) {
+                newFilters[filterType] = null;
+            } else {
+                // Иначе выставляем конкретный ID и снимаем "Все"
+                newFilters[filterType] = valueId;
+            }
+
+            console.log("🔎 Активные фильтры (по id):", newFilters);
+            return newFilters;
+        });
     };
+
+
+
+
 
     // ✅ Фронтовый поиск по (name + company_name)
     const filteredJobs = jobs.filter((job) => {
@@ -152,7 +168,12 @@ const JobsPage = () => {
                                 filters={filtersFromServer}
                                 activeFilters={activeFilters}
                                 onSelect={handleFilterSelect}
+                                onReset={() => {
+                                    setActiveFilters({});
+                                    setPage(1); // сбрасываем пагинацию
+                                }}
                             />
+
                         </div>
                     )}
                 </div>

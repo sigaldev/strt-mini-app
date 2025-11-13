@@ -65,13 +65,27 @@ class VacanciesServiceClass {
                 params: cleanFilters,
             });
 
-            console.log("[VACANCIES SERVICE] Vacancies fetched successfully:", response.data);
-            return response.data;
+            const data = response.data;
+
+            let results: Vacancy[] = [];
+            if (Array.isArray(data.vacancies)) {
+                results = data.vacancies;
+            } else if (Array.isArray(data.results)) {
+                results = data.results;
+            }
+
+            return {
+                count: results.length,
+                next: null,
+                previous: null,
+                results
+            };
         } catch (error) {
             console.error("[VACANCIES SERVICE] Failed to load vacancies:", error);
             throw error;
         }
     }
+
 
     async fetchFilters(): Promise<FiltersResponse> {
         try {
