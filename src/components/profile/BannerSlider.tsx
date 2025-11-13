@@ -19,12 +19,12 @@ const BannersSlider = ({ banners }: BannersSliderProps) => {
                 slidesPerView={"auto"}
                 centeredSlides={true}
                 className="w-full pb-10"
-                pagination={{ clickable: true }}
+                pagination={{ clickable: false }}
             >
                 {banners.map((banner, index) => (
                     <SwiperSlide key={index} className="!w-11/12">
                         <div
-                            className="shadow-md h-32 rounded-xl overflow-hidden flex cursor-pointer hover:scale-[1.03] transition-transform"
+                            className="shadow-md h-32 rounded-xl overflow-hidden flex transition-transform"
                         >
                             {banner}
                         </div>

@@ -50,13 +50,17 @@ const AchievementsSlider = ({ achievements }: AchievementsSliderProps) => {
                         alt="Нет достижений"
                         className="
                             absolute
-                            right-[-20px]
+                            right-[-60px]
+                            sm:right-[-20px]
                             bottom-[-10px]
                             w-36
                             h-36
                             pointer-events-none
-                        "
+                            hidden
+                            xs:block
+                          "
                     />
+
                 </div>
             )}
         </div>

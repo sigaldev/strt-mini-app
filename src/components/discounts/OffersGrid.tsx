@@ -9,7 +9,7 @@ interface Props {
 
 const OffersGrid: React.FC<Props> = ({ offers, navigate }) => {
     return (
-        <div className="flex flex-col items-center gap-[10px]">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             {offers.map((offer) => (
                 <OfferCard
                     key={offer.id}

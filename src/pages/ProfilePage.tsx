@@ -51,7 +51,7 @@ const ProfilePage = () => {
     if (loading || !profileData) return <Loader />;
 
     return (
-        <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+        <div className="min-h-screen bg-gray-50 p-4 md:p-6 overflow-hidden">
             <Header setShowNotifications={setShowNotifications} setShowBurgerMenu={setShowBurgerMenu} />
             <ProfileCard profileData={profileData} getInitials={getInitials} />
             <BannersSlider banners={banners} />
