@@ -2,10 +2,15 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Counter } from "@maxhub/max-ui";
 import notAchiveImg from "../../assets/achivments/notAchiveImg.svg";
 
+interface AchievementLogo {
+    original: string;
+}
+
 interface Achievement {
     id: string | number;
-    icon: string;
-    name: string;
+    title?: string;
+    name?: string;
+    logo?: AchievementLogo;
 }
 
 interface AchievementsSliderProps {
@@ -25,9 +30,15 @@ const AchievementsSlider = ({ achievements }: AchievementsSliderProps) => {
                         {achievements.map((a) => (
                             <SwiperSlide
                                 key={a.id}
-                                className="w-24 h-24 flex items-center justify-center rounded-[50px] border-[2px] border-gray-200 transition-transform"
+                                className="w-[108px] h-[108px] flex items-center justify-center rounded-[16.82px] border border-[#E7EAF1] bg-gradient-to-b from-white to-[#F6F8FF] shadow-sm transition-transform"
                             >
-                                <img src={a.logo} alt={a.title} />
+                                <div className="w-[64px] h-[64px] rounded-full border-[6px] border-[#B7C6FF] bg-white flex items-center justify-center overflow-hidden">
+                                    <img
+                                        src={a.logo?.original ?? notAchiveImg}
+                                        alt={a.title ?? a.name ?? "Значок достижения"}
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
                             </SwiperSlide>
                         ))}
                     </Swiper>
