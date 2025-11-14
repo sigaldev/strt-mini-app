@@ -15,6 +15,7 @@ const EventsPage = () => {
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [activeTab, setActiveTab] = useState<EventType>("event");
+    const [recommendedEvent, setRecommendedEvent] = useState<Event | null>(null);
 
     const loaderRef = useRef<HTMLDivElement>(null);
 
@@ -69,6 +70,14 @@ const EventsPage = () => {
         fetchEvents(page);
     }, [page, fetchEvents]);
 
+    useEffect(() => {
+        const fetchEvent = async () => {
+            const recommended = await EventService.getEventById(915);
+            setRecommendedEvent(recommended.event);
+        }
+        fetchEvent();
+    }, []);
+
     const tabs: { id: EventType; label: string }[] = [
         { id: "event", label: "Мероприятия" },
         { id: "challenge", label: "Задания" },
@@ -82,22 +91,37 @@ const EventsPage = () => {
                 <h1 className="absolute left-1/2 -translate-x-1/2 text-gray-900 font-bold text-xl">Мероприятия</h1>
             </div>
 
-            {/* Recommended */}
-            <h3 className="text-lg font-semibold text-white mb-4">Студент РТ рекомендует</h3>
-            <div
-                className="flex items-center gap-4 px-4 py-6 rounded-2xl cursor-pointer hover:shadow-md transition-shadow mb-6"
-                style={{
-                    backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url(${meroBg})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center'
-                }}
-            >
-                <img src={icoMero} alt="" className="w-35 h-[120px]" />
-                <div>
-                    <h4 className="text-white text-xl font-semibold">Лига приключений</h4>
-                    <h5 className="text-white text-xl mt-2">Городской</h5>
-                </div>
-            </div>
+            {/* Recommended Banner */}
+            {recommendedEvent && (
+                <>
+                    <h3 className="text-lg font-semibold text-white mb-4">
+                        Студент РТ рекомендует
+                    </h3>
+                    <div
+                        className="flex items-center gap-4 px-4 py-6 rounded-2xl cursor-pointer hover:shadow-md transition-shadow mb-6"
+                        style={{
+                            backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url(${recommendedEvent.head.background.medium})`,
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center'
+                        }}
+                        onClick={() => navigate(`/events/${recommendedEvent.id}`)}
+                    >
+                        <img
+                            src={recommendedEvent.head.logo.thumb}
+                            alt=""
+                            className="w-32 h-[120px]"
+                        />
+                        <div>
+                            <h4 className="text-white text-xl">
+                                {recommendedEvent.head.short_title}
+                            </h4>
+                            <h5 className="text-white text-md mt-2">
+                                {recommendedEvent.head.rarity.name}
+                            </h5>
+                        </div>
+                    </div>
+                </>
+            )}
 
             <div className="flex gap-2 mb-5">
                 {tabs.map((tab) => (

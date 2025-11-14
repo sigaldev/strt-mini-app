@@ -20,8 +20,7 @@ const ForumsPage = () => {
                 const data = await EventService.getEvents(1, 20);
                 setEvents(data?.events || []);
 
-                const recommended = await EventService.getEventById(915);
-                setRecommendedEvent(recommended.event);
+
             } catch (err) {
                 console.error("Ошибка при загрузке форумов", err);
             } finally {
