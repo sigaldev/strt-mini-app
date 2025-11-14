@@ -12,6 +12,7 @@ import RatingPage from "../pages/RatingPage.tsx";
 import UserProfilePage from "../pages/UserProfilePage.tsx";
 import ConnectsPage from "../pages/ConnectsPage.tsx";
 import ForumsPage from "../pages/ForumsPage.tsx";
+import ScholarshipPage from "../pages/ScholarshipPage.tsx";
 
 export const ROUTES = {
     LOGIN: "/login",
@@ -27,6 +28,7 @@ export const ROUTES = {
     USERPROFILE: "/user/:id",
     USER_CONNECT: "/user/connects/:id",
     FORUM: "/forum",
+    SCHOLARSHIP: "/scholarship"
 };
 
 export const routesConfig = [
@@ -49,6 +51,7 @@ export const routesConfig = [
                 { path: ROUTES.USERPROFILE, element: UserProfilePage },
                 { path: ROUTES.USER_CONNECT, element: ConnectsPage },
                 { path: ROUTES.FORUM, element: ForumsPage },
+                { path: ROUTES.SCHOLARSHIP, element: ScholarshipPage },
             ],
         },
 

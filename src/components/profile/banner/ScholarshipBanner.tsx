@@ -2,10 +2,15 @@ import {ChevronRight} from "lucide-react";
 import rightImg from "../../../assets/profileBanner/banner-3.svg";
 import decor from "../../../assets/profileBanner/decor2.svg";
 import star from "../../../assets/star.svg";
+import {useNavigate} from "react-router-dom";
 
 const ScholarshipBanner = () => {
+    const navigate = useNavigate();
+
     return (
-        <div className="text-[#fff] relative flex w-full px-[30px] pt-[20px] h-40 rounded-xl overflow-hidden bg-[#000]">
+        <div
+            onClick={() => navigate('/scholarship')}
+            className="text-[#fff] relative flex w-full px-[30px] pt-[20px] h-40 rounded-xl overflow-hidden bg-[#000]">
 
             {/* Текст + стрелка */}
             <div className="z-10 space-y-2">
