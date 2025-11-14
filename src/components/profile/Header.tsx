@@ -3,16 +3,11 @@ import { Bell, Menu } from 'lucide-react'
 interface HeaderProps {
     setShowNotifications: React.Dispatch<React.SetStateAction<boolean>>
     setShowBurgerMenu: React.Dispatch<React.SetStateAction<boolean>>
+    requests?: any[]
 }
 
-interface HeaderProps {
-    setShowNotifications: React.Dispatch<React.SetStateAction<boolean>>
-    setShowBurgerMenu: React.Dispatch<React.SetStateAction<boolean>>
-    connectRequests?: any[]
-}
-
-const Header = ({ setShowNotifications, setShowBurgerMenu, connectRequests = [] }: HeaderProps) => {
-    const hasNewRequests = connectRequests.length > 0; // теперь безопасно
+const Header = ({ setShowNotifications, setShowBurgerMenu, requests = [] }: HeaderProps) => {
+    const hasNewRequests = Array.isArray(requests) && requests.length > 0;
 
     return (
         <div className="flex items-center mb-6 relative mt-2">
@@ -33,7 +28,5 @@ const Header = ({ setShowNotifications, setShowBurgerMenu, connectRequests = [] 
         </div>
     )
 }
-
-
 
 export default Header
