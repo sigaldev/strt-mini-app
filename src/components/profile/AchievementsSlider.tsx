@@ -1,9 +1,11 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Counter } from "@maxhub/max-ui";
+import rocket from "../../assets/achivments/rocket.svg";
 import notAchiveImg from "../../assets/achivments/notAchiveImg.svg";
 
 interface AchievementLogo {
-    original: string;
+    medium?: string;
+    original?: string;
 }
 
 interface Achievement {
@@ -26,21 +28,28 @@ const AchievementsSlider = ({ achievements }: AchievementsSliderProps) => {
                         <h3 className="text-lg font-semibold text-gray-900">Достижения</h3>
                         <Counter appearance="themed" mode="filled" value={achievements.length} />
                     </div>
-                    <Swiper spaceBetween={12} slidesPerView="auto" className="py-2" grabCursor={true}>
-                        {achievements.map((a) => (
-                            <SwiperSlide
-                                key={a.id}
-                                className="w-[108px] h-[108px] flex items-center justify-center rounded-[16.82px] border border-[#E7EAF1] bg-gradient-to-b from-white to-[#F6F8FF] shadow-sm transition-transform"
-                            >
-                                <div className="w-[64px] h-[64px] rounded-full border-[6px] border-[#B7C6FF] bg-white flex items-center justify-center overflow-hidden">
-                                    <img
-                                        src={a.logo?.original ?? notAchiveImg}
-                                        alt={a.title ?? a.name ?? "Значок достижения"}
-                                        className="w-full h-full object-cover"
-                                    />
-                                </div>
-                            </SwiperSlide>
-                        ))}
+                    <Swiper spaceBetween={20} slidesPerView="auto" className="py-2" grabCursor={true}>
+                        {achievements.map((a) => {
+                            const logoSrc =
+                                a.logo?.medium ||
+                                a.logo?.original ||
+                                notAchiveImg;
+
+                            return (
+                                <SwiperSlide
+                                    key={a.id}
+                                    className="w-[90px] h-[90px] flex items-center justify-center shadow-sm transition-transform"
+                                >
+                                    <div className="w-full h-full rounded-full border-[6px] border-[#B7C6FF] bg-white flex items-center justify-center overflow-hidden">
+                                        <img
+                                            src={logoSrc}
+                                            alt={a.title ?? a.name ?? "Значок достижения"}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                </SwiperSlide>
+                            );
+                        })}
                     </Swiper>
                 </>
             ) : (
@@ -57,7 +66,7 @@ const AchievementsSlider = ({ achievements }: AchievementsSliderProps) => {
                     </div>
 
                     <img
-                        src={notAchiveImg}
+                        src={rocket}
                         alt="Нет достижений"
                         className="
                             absolute
@@ -71,7 +80,6 @@ const AchievementsSlider = ({ achievements }: AchievementsSliderProps) => {
                             xs:block
                           "
                     />
-
                 </div>
             )}
         </div>
