@@ -56,7 +56,7 @@ const UserProfilePage = () => {
                 >
                     <ChevronLeft className="w-6 h-6 text-gray-700" />
                 </button>
-                <h1 className="text-gray-900 mx-auto font-semibold">Профиль пользователя</h1>
+                <h1 className="text-gray-900 mx-auto font-semibold mt-2">Профиль пользователя</h1>
             </div>
 
             {/* Profile Card */}
@@ -108,22 +108,36 @@ const UserProfilePage = () => {
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-3 gap-4 mb-6">
-                <div className="p-4 text-center">
-                    <div className="text-2xl font-bold text-gray-900">{user.connects}</div>
-                    <div className="text-xs text-gray-600">Коннекты</div>
+            <div className="grid grid-cols-3 rounded-2xl overflow-hidden mb-6">
+                {/* Коннекты */}
+                <div
+                    onClick={() => navigate(`/user/connects/${user.id}`)}
+                    className="text-center p-3 cursor-pointer hover:bg-gray-100 transition flex flex-col items-center"
+                >
+                    <div className="text-[18px] font-semibold text-gray-900">{user.connects}</div>
+                    <div className="text-xs text-gray-400">Коннекты</div>
                 </div>
 
-                <div className="p-4 text-center">
-                    <div className="text-2xl font-bold text-[#007AFF]">{user.rank}</div>
-                    <div className="text-xs text-gray-600">Рейтинг</div>
+                {/* Рейтинг */}
+                <div
+                    onClick={() => navigate("/rating")}
+                    className="text-center p-3 cursor-pointer hover:bg-gray-100 transition flex flex-col items-center border-l  border-r border-gray-300 "
+                >
+                    <div className="text-[18px] font-semibold text-[#007AFF]">{user.rank}</div>
+                    <div className="text-xs text-gray-400">Рейтинг</div>
                 </div>
 
-                <div className="p-4 text-center">
-                    <div className="text-2xl font-bold text-gray-900">{user.score}</div>
-                    <div className="text-xs text-gray-600">Баллы</div>
+                {/* Баллы */}
+                <div
+                    onClick={() => navigate("/rating")}
+                    className="text-center p-3 cursor-pointer hover:bg-gray-100 transition flex flex-col items-center"
+                >
+                    <div className="text-[18px] font-semibold text-gray-900">{user.score}</div>
+                    <div className="text-xs text-gray-400">Баллы</div>
                 </div>
             </div>
+
+
 
             {/* Achievements */}
             <AchievementsSlider achievements={user.achievements} />

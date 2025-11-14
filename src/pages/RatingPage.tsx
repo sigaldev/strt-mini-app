@@ -80,7 +80,7 @@ const RatingPage = () => {
             <div className="bg-white sticky top-0 z-10 shadow-sm">
                 <div className="p-4 flex items-center gap-3">
                     <button
-                        onClick={() => navigate("/profile")}
+                        onClick={() => navigate(-1)}
                         className="p-2 hover:bg-gray-100 rounded-lg transition"
                     >
                         <ChevronLeft className="w-6 h-6 text-gray-900" />

@@ -10,6 +10,7 @@ import JobsPage from "../pages/JobsPage.tsx";
 import EventDetailPage from "../pages/EventDetailPage.tsx";
 import RatingPage from "../pages/RatingPage.tsx";
 import UserProfilePage from "../pages/UserProfilePage.tsx";
+import ConnectsPage from "../pages/ConnectsPage.tsx";
 
 export const ROUTES = {
     LOGIN: "/login",
@@ -23,6 +24,7 @@ export const ROUTES = {
     JOBS: "/jobs",
     RATING: "/rating",
     USERPROFILE: "/user/:id",
+    USER_CONNECT: "/user/connects/:id",
 };
 
 export const routesConfig = [
@@ -34,17 +36,18 @@ export const routesConfig = [
             layout: true,
             children: [
                 { path: "", element: () => <Navigate to={ROUTES.PROFILE} replace /> },
-        { path: ROUTES.PROFILE, element: ProfilePage },
-        { path: ROUTES.SCHEDULE, element: SchedulePage },
-        { path: ROUTES.EVENTS, element: EventsPage },
-        { path: ROUTES.EVENT_DETAIL, element: EventDetailPage },
-        { path: ROUTES.DISCOUNTS, element: DiscountsPage },
-        { path: ROUTES.DISCOUNT_DETAIL, element: DiscountDetailPage },
-        { path: ROUTES.JOBS, element: JobsPage },
-        { path: ROUTES.RATING, element: RatingPage },
-        { path: ROUTES.USERPROFILE, element: UserProfilePage },
-    ],
-    },
+                { path: ROUTES.PROFILE, element: ProfilePage },
+                { path: ROUTES.SCHEDULE, element: SchedulePage },
+                { path: ROUTES.EVENTS, element: EventsPage },
+                { path: ROUTES.EVENT_DETAIL, element: EventDetailPage },
+                { path: ROUTES.DISCOUNTS, element: DiscountsPage },
+                { path: ROUTES.DISCOUNT_DETAIL, element: DiscountDetailPage },
+                { path: ROUTES.JOBS, element: JobsPage },
+                { path: ROUTES.RATING, element: RatingPage },
+                { path: ROUTES.USERPROFILE, element: UserProfilePage },
+                { path: ROUTES.USER_CONNECT, element: ConnectsPage },
+            ],
+        },
 
-    { path: "*", element: () => <Navigate to={ROUTES.LOGIN} replace /> },
+        { path: "*", element: () => <Navigate to={ROUTES.LOGIN} replace /> },
 ];

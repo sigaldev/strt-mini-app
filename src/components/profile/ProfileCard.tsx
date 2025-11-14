@@ -25,7 +25,9 @@ const ProfileCard = ({ profileData, getInitials }: ProfileCardProps) => {
 
             <div className="grid grid-cols-3">
                 {/* Коннекты */}
-                <div className="text-center p-3 rounded-lg">
+                <div
+                    onClick={() => navigate(`/user/connects/${profileData.id}`)}
+                    className="text-center p-3 rounded-lg">
                     <div className="text-[18px] text-gray-900">{profileData.connects}</div>
                     <div className="text-xs text-gray-400">Коннекты</div>
                 </div>

@@ -47,6 +47,18 @@ class ConnectService {
             throw err;
         }
     }
+
+    static async getUserConnects(user_id: string | number): Promise<any[]> {
+        console.log(`[ConnectService] Fetching connects for user ID: ${user_id}`);
+        try {
+            const resp = await api.get(`/api/v1/connects/${user_id}`);
+            console.log("[ConnectService] User connects fetched:", resp.data.connects);
+            return resp.data.connects;
+        } catch (err) {
+            console.error("[ConnectService] Error fetching user connects:", err);
+            return [];
+        }
+    }
 }
 
 export default ConnectService;
