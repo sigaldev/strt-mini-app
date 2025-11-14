@@ -118,8 +118,9 @@ const DiscountDetailPage = () => {
                     mode="primary"
                     size="large"
                     className="w-full mt-4"
+                    onClick={() => window.open(discount.site_link, "_blank")}
                 >
-                    Активировать предложение
+                    Перейти на предложение
                 </Button>
             </div>
         </div>
