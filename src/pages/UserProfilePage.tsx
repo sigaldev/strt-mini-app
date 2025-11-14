@@ -4,6 +4,7 @@ import { ChevronLeft, UserPlus, UserCheck } from "lucide-react"
 import Loader from "../components/Loader"
 import RatingService from "../components/api/service/RatingService.ts"
 import AchievementsSlider from "../components/userprofile/AchievementsSlider.tsx"
+import ConnectService from "../components/api/service/ConnectService.ts";
 
 const UserProfilePage = () => {
     const { id } = useParams()
@@ -78,19 +79,31 @@ const UserProfilePage = () => {
                 </div>
 
                 {/* Connect button */}
-                {!requestSent ? (
+                {user.in_connect ? (
+                    <div className="w-full bg-gray-100 text-gray-600 py-3 rounded-xl font-medium flex items-center justify-center gap-2">
+                        <UserCheck className="w-5 h-5" />
+                        В коннекте
+                    </div>
+                ) : (requestSent || user.is_connect_sent) ? (
+                    <div className="w-full bg-gray-100 text-gray-600 py-3 rounded-xl font-medium flex items-center justify-center gap-2">
+                        <UserCheck className="w-5 h-5" />
+                        Запрос отправлен
+                    </div>
+                ) : (
                     <button
-                        onClick={() => setRequestSent(true)}
+                        onClick={async () => {
+                            try {
+                                await ConnectService.sendConnectRequest(id);
+                                setRequestSent(true);
+                            } catch (err) {
+                                alert("Не удалось отправить запрос");
+                            }
+                        }}
                         className="w-full bg-[#007AFF] hover:bg-[#0066dd] text-white py-3 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors"
                     >
                         <UserPlus className="w-5 h-5" />
                         Предложить коннект
                     </button>
-                ) : (
-                    <div className="w-full bg-gray-100 text-gray-600 py-3 rounded-xl font-medium flex items-center justify-center gap-2">
-                        <UserCheck className="w-5 h-5" />
-                        Запрос отправлен
-                    </div>
                 )}
             </div>
 
