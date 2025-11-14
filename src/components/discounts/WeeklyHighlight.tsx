@@ -2,15 +2,11 @@ import rightImg from "../../assets/discounts/banner/mainImg.png";
 import decor from "../../assets/discounts/banner/decor.svg";
 import decor2 from "../../assets/discounts/banner/decor2.svg";
 
-interface Props {
-    onClick: () => void;
-}
 
-const WeeklyHighlight: React.FC<Props> = ({ onClick }) => {
+const WeeklyHighlight = () => {
     return (
         <div
             className="text-white relative flex w-full px-[30px] pt-[20px] h-40 rounded-xl overflow-hidden cursor-pointer hover:shadow-xl transition-shadow"
-            onClick={onClick}
             style={{ background: "#000" }}
         >
             {/* Текст + стрелка */}

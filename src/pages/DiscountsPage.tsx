@@ -107,9 +107,7 @@ const DiscountsPage = () => {
 
             <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
-            <WeeklyHighlight
-                onClick={() => navigate(`/discounts/${weeklyHighlight.id}`)}
-            />
+            <WeeklyHighlight/>
 
             <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
