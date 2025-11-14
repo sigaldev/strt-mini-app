@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import icoMero from "../assets/mero/ico-1.svg";
-import meroBg from "../assets/mero/meroBg.png";
 import { Button } from "@maxhub/max-ui";
 import EventService from "../components/api/service/EventService.ts";
 import type { Event } from "../components/api/service/EventService.ts";
@@ -10,15 +8,20 @@ import Loader from "../components/Loader.tsx";
 const ForumsPage = () => {
     const navigate = useNavigate();
     const [events, setEvents] = useState<Event[]>([]);
+    const [recommendedEvent, setRecommendedEvent] = useState<Event | null>(null);
     const [loading, setLoading] = useState(true);
     const [showRarityInfo, setShowRarityInfo] = useState(false);
 
     useEffect(() => {
-        const fetchForums = async () => {
+        const fetchData = async () => {
             try {
                 setLoading(true);
+
                 const data = await EventService.getEvents(1, 20);
                 setEvents(data?.events || []);
+
+                const recommended = await EventService.getEventById(915);
+                setRecommendedEvent(recommended.event);
             } catch (err) {
                 console.error("Ошибка при загрузке форумов", err);
             } finally {
@@ -26,7 +29,7 @@ const ForumsPage = () => {
             }
         };
 
-        fetchForums();
+        fetchData();
     }, []);
 
     if (loading) return <Loader />;
@@ -39,27 +42,40 @@ const ForumsPage = () => {
                         Подробнее
                     </Button>
                 </div>
-                <h1 className="text-gray-900 font-bold text-xl mx-auto">
-                    Форумы
-                </h1>
+                <h1 className="text-gray-900 font-bold text-xl mx-auto">Форумы</h1>
             </div>
 
-            {/* Recommended */}
-            <h3 className="text-lg font-semibold text-white mb-4">Студент РТ рекомендует</h3>
-            <div
-                className="flex items-center gap-4 px-4 py-6 rounded-2xl cursor-pointer hover:shadow-md transition-shadow mb-6"
-                style={{
-                    backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url(${meroBg})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center'
-                }}
-            >
-                <img src={icoMero} alt="" className="w-35 h-[120px]" />
-                <div>
-                    <h4 className="text-white text-xl font-semibold">Форум приключений</h4>
-                    <h5 className="text-white text-xl mt-2">Городской</h5>
-                </div>
-            </div>
+            {/* Recommended Banner */}
+            {recommendedEvent && (
+                <>
+                    <h3 className="text-lg font-semibold text-white mb-4">
+                        Студент РТ рекомендует
+                    </h3>
+                    <div
+                        className="flex items-center gap-4 px-4 py-6 rounded-2xl cursor-pointer hover:shadow-md transition-shadow mb-6"
+                        style={{
+                            backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url(${recommendedEvent.head.background.medium})`,
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center'
+                        }}
+                        onClick={() => navigate(`/events/${recommendedEvent.id}`)}
+                    >
+                        <img
+                            src={recommendedEvent.head.logo.thumb}
+                            alt=""
+                            className="w-32 h-[120px]"
+                        />
+                        <div>
+                            <h4 className="text-white text-xl">
+                                {recommendedEvent.head.short_title}
+                            </h4>
+                            <h5 className="text-white text-md mt-2">
+                                {recommendedEvent.head.rarity.name}
+                            </h5>
+                        </div>
+                    </div>
+                </>
+            )}
 
             {/* Forums Grid */}
             <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 justify-items-center">
@@ -125,5 +141,6 @@ const ForumsPage = () => {
         </div>
     );
 };
+
 
 export default ForumsPage;
