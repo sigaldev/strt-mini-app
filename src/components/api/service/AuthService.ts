@@ -88,20 +88,27 @@ class AuthService {
             first_name,
             last_name,
             group_number,
-            has_avatar: !!avatar
+            has_avatar: !!avatar,
+            avatar_name: avatar?.name,
+            avatar_size: avatar?.size,
+            avatar_type: avatar?.type
         });
 
         try {
+            // Step 1: валидация телефона
             const step1Response: AxiosResponse<SignUpStep1Response> = await api.post(
                 "/api/v1/sign_up/step1/",
                 { phone_number }
             );
+
+            authLogger.debug("Step1 response", step1Response.data);
 
             if (step1Response.data.status !== "validated") {
                 authLogger.warn("Phone validation failed", step1Response.data);
                 return undefined;
             }
 
+            // Step 3: регистрация с аватаром
             const formData = new FormData();
             formData.append("phone_number", phone_number);
             formData.append("phone", phone_number);
@@ -111,26 +118,44 @@ class AuthService {
             formData.append("group_number", group_number);
             formData.append("university_id", String(university_id));
             formData.append("group_id", String(group_id));
-            if (avatar) formData.append("avatar", avatar);
+
+            if (avatar) {
+                authLogger.info("Appending avatar to FormData", {
+                    name: avatar.name,
+                    size: avatar.size,
+                    type: avatar.type
+                });
+                formData.append("avatar", avatar);
+            } else {
+                authLogger.warn("No avatar provided");
+            }
+
+            // Логируем содержимое FormData (имена полей)
+            for (const pair of formData.entries()) {
+                authLogger.debug("FormData entry", { key: pair[0], value: pair[1] });
+            }
 
             const step3Response: AxiosResponse<SignUpStep3Response> = await api.post(
                 "/api/v1/sign_up/step3/",
-                formData
+                formData,
+                { headers: { "Content-Type": "multipart/form-data" } }
             );
+
+            authLogger.info("Step3 response received", step3Response.data);
 
             if (step3Response.data.token && step3Response.data.refresh_token) {
                 Cookies.set("STRT_MAX_ACCESS_TOKEN", step3Response.data.token);
                 Cookies.set("STRT_MAX_REFRESH_TOKEN", step3Response.data.refresh_token);
-
-                authLogger.info("Tokens stored in cookie", {
-                    token: step3Response.data.token.slice(0, 10) + "...",
-                    refresh_token: step3Response.data.refresh_token.slice(0, 10) + "..."
-                });
-            } else {
-                authLogger.warn("Step 3 response did not include tokens", step3Response.data);
+                authLogger.info("Tokens stored in cookies");
             }
 
-            authLogger.info("Registration completed successfully", step3Response.data);
+            if (!step3Response.data.user) {
+                authLogger.warn("Step3 response has no user object", step3Response.data);
+            } else if (!step3Response.data.user.avatar) {
+                authLogger.warn("User avatar is null in response", step3Response.data.user);
+            } else {
+                authLogger.info("User avatar URL", step3Response.data.user.avatar);
+            }
 
             return step3Response.data.user;
         } catch (error: unknown) {
@@ -139,6 +164,7 @@ class AuthService {
             throw error;
         }
     }
+
 
 
     async refreshToken(): Promise<string> {

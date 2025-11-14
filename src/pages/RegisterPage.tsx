@@ -5,6 +5,7 @@ import { Input, Button } from "@maxhub/max-ui";
 import AuthService, { hasRefreshToken } from "../components/api/service/AuthService";
 import UniversityService, { type StudentGroup, type University } from "../components/api/service/UniversityService.ts";
 import CustomSelect from "../components/ui/CustomSelect.tsx";
+import AvatarInput from "../components/ui/AvatarInput.tsx";
 
 interface RegisterFormData {
     phone_number: string;
@@ -180,11 +181,11 @@ const RegisterPage: React.FC = () => {
 
                     {loadingGroups && <p className="text-gray-400 text-sm mt-1">Загрузка групп…</p>}
 
-                    <div>
-                        <label className="flex items-center gap-2 cursor-pointer text-gray-500">
-                            <Camera className="w-5 h-5"/> Загрузить аватар (необязательно)
-                            <input type="file" name="avatar" accept="image/*" onChange={handleChange} className="hidden"/>
-                        </label>
+                    <div className="flex flex-col items-center mb-4">
+                        <AvatarInput
+                            avatar={formData.avatar}
+                            onChange={(file) => setFormData(prev => ({ ...prev, avatar: file }))}
+                        />
                     </div>
 
                     <Button type="submit" size="large" className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white" loading={loading}>Зарегистрироваться</Button>
