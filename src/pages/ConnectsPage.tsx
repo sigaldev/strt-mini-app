@@ -6,9 +6,11 @@ import ConnectService from "../components/api/service/ConnectService.ts";
 interface ConnectUser {
     id: number;
     full_name: string;
+    first_name: string;
+    last_name: string;
     university: string;
     group: string;
-    avatar: string;
+    avatar: string | null;
 }
 
 const ConnectsPage = () => {
@@ -40,13 +42,15 @@ const ConnectsPage = () => {
                     return {
                         id: u.id,
                         full_name: `${u.first_name} ${u.last_name}`,
+                        first_name: u.first_name || "",
+                        last_name: u.last_name || "",
                         university: u.university?.abbreviation || "-", // <- вот тут берём abbreviation
                         group: u.group_number || "-",
                         avatar:
                             u.avatar?.medium?.url ||
                             u.avatar?.large?.url ||
                             u.avatar?.thumb?.url ||
-                            "",
+                            null,
                     };
                 });
 
@@ -62,6 +66,15 @@ const ConnectsPage = () => {
 
         fetchConnects();
     }, [finalUserId]);
+
+    const getInitials = (connect: ConnectUser) => {
+        const first = connect.first_name?.trim()?.[0] || connect.full_name?.trim()?.[0] || "";
+        const last =
+            connect.last_name?.trim()?.[0] ||
+            connect.full_name?.trim().split(/\s+/)[1]?.[0] ||
+            "";
+        return `${first}${last}`.toUpperCase();
+    };
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -97,12 +110,18 @@ const ConnectsPage = () => {
                             }}
                             className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition cursor-pointer flex items-center gap-4"
                         >
-                            <div className="w-14 h-14 rounded-full overflow-hidden flex items-center justify-center">
-                                <img
-                                    src={u.avatar}
-                                    alt={u.full_name}
-                                    className="w-full h-full object-cover"
-                                />
+                            <div className="w-14 h-14 rounded-full overflow-hidden flex items-center justify-center text-white text-lg font-semibold">
+                                {u.avatar ? (
+                                    <img
+                                        src={u.avatar}
+                                        alt={u.full_name}
+                                        className="w-full h-full object-cover"
+                                    />
+                                ) : (
+                                    <div className="bg-[#007AFF] w-full h-full flex items-center justify-center">
+                                        {getInitials(u)}
+                                    </div>
+                                )}
                             </div>
 
                             <div className="flex-1 min-w-0">
