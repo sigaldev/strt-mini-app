@@ -62,8 +62,18 @@ const UserProfilePage = () => {
             {/* Profile Card */}
             <div className="rounded-2xl p-6 mb-6">
                 <div className="flex flex-col items-center gap-4 mb-6 text-center">
-                    <div className="w-20 h-20 bg-[#007AFF] rounded-full flex items-center justify-center text-white text-2xl font-bold">
-                        {getInitials()}
+                    <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center text-white text-2xl font-bold">
+                        {user.avatar ? (
+                            <img
+                                src={user.avatar.medium?.url || user.avatar.large?.url || user.avatar.thumb?.url}
+                                alt={`${user.full_name} avatar`}
+                                className="w-full h-full object-cover"
+                            />
+                        ) : (
+                            <div className="bg-[#007AFF] w-full h-full flex items-center justify-center">
+                                {getInitials()}
+                            </div>
+                        )}
                     </div>
                     <h2 className="text-xl text-gray-900">
                         {user.first_name} {user.last_name}
