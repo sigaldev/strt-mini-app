@@ -53,7 +53,7 @@ const EventDetailPage = () => {
             <div className="bg-gray-100 border-b border-gray-300 sticky top-0 z-10">
                 <div className="p-4 flex items-center gap-3">
                     <button
-                        onClick={() => navigate("/events")}
+                        onClick={() => navigate(-1)}
                         className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
                     >
                         <ArrowLeft className="w-5 h-5 text-gray-700" />

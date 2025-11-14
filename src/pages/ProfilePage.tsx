@@ -8,7 +8,7 @@ import BurgerOverlay from "../components/profile/BurgerOverlay";
 import BannersSlider from "../components/profile/BannerSlider.tsx";
 import CareerBanner from "../components/profile/banner/CareerBanner.tsx";
 import ScholarshipBanner from "../components/profile/banner/ScholarshipBanner.tsx";
-import OpportunitiesBanner from "../components/profile/banner/OpportunitiesBanner.tsx";
+import ForumsBanner from "../components/profile/banner/ForumsBanner.tsx";
 import { ProfileService, type Profile } from "../components/api/service/ProfileService.ts";
 import ConnectService from "../components/api/service/ConnectService";
 import Loader from "../components/Loader.tsx";
@@ -23,7 +23,7 @@ const ProfilePage = () => {
     const banners = [
         <CareerBanner key="career" />,
         <ScholarshipBanner key="scholarship" />,
-        <OpportunitiesBanner key="opportunities" />,
+        <ForumsBanner key="opportunities" />,
     ];
 
     const getInitials = () => {

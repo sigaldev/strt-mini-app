@@ -11,6 +11,7 @@ import EventDetailPage from "../pages/EventDetailPage.tsx";
 import RatingPage from "../pages/RatingPage.tsx";
 import UserProfilePage from "../pages/UserProfilePage.tsx";
 import ConnectsPage from "../pages/ConnectsPage.tsx";
+import ForumsPage from "../pages/ForumsPage.tsx";
 
 export const ROUTES = {
     LOGIN: "/login",
@@ -25,6 +26,7 @@ export const ROUTES = {
     RATING: "/rating",
     USERPROFILE: "/user/:id",
     USER_CONNECT: "/user/connects/:id",
+    FORUM: "/forum",
 };
 
 export const routesConfig = [
@@ -46,6 +48,7 @@ export const routesConfig = [
                 { path: ROUTES.RATING, element: RatingPage },
                 { path: ROUTES.USERPROFILE, element: UserProfilePage },
                 { path: ROUTES.USER_CONNECT, element: ConnectsPage },
+                { path: ROUTES.FORUM, element: ForumsPage },
             ],
         },
 

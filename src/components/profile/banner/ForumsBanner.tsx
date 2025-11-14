@@ -2,10 +2,16 @@ import decor from "../../../assets/profileBanner/decor-4.svg";
 import star from "../../../assets/star.svg";
 import {ChevronRight} from "lucide-react";
 import rightImg from "../../../assets/profileBanner/forum.png";
+import {useNavigate} from "react-router-dom";
 
-const OpportunitiesBanner = () => {
+const ForumsBanner = () => {
+    const navigate = useNavigate();
+
+
     return (
-        <div className="text-[#fff] relative flex w-full px-[30px] pt-[20px] h-40 rounded-xl overflow-hidden bg-[#000]">
+        <div
+            onClick={() => navigate('/forum')}
+            className="text-[#fff] relative flex w-full px-[30px] pt-[20px] h-40 rounded-xl overflow-hidden bg-[#000]">
 
             {/* Текст + стрелка */}
             <div className="z-10 space-y-2">
@@ -18,7 +24,7 @@ const OpportunitiesBanner = () => {
                 <p className="text-[14px]">Форумы на любой вкус,  <br/> выбирай активное студенчество! </p>
             </div>
 
-            <div className="z-10 absolute right-[0] top-1/2 -translate-y-2/3 w-32">
+            <div className="z-10 absolute right-[0] top-1/2 -translate-y-[80px] w-40">
                 <img src={rightImg} alt="" />
             </div>
 
@@ -56,4 +62,4 @@ const OpportunitiesBanner = () => {
     );
 };
 
-export default OpportunitiesBanner;
+export default ForumsBanner;
