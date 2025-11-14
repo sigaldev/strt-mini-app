@@ -42,7 +42,11 @@ const ConnectsPage = () => {
                         full_name: `${u.first_name} ${u.last_name}`,
                         university: u.university?.abbreviation || "-", // <- вот тут берём abbreviation
                         group: u.group_number || "-",
-                        avatar: u.avatar?.medium || u.avatar?.large || u.avatar?.thumb || "",
+                        avatar:
+                            u.avatar?.medium?.url ||
+                            u.avatar?.large?.url ||
+                            u.avatar?.thumb?.url ||
+                            "",
                     };
                 });
 
