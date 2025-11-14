@@ -27,7 +27,7 @@ const AchievementsSlider = ({ achievements }: AchievementsSliderProps) => {
                                 key={a.id}
                                 className="w-24 h-24 flex items-center justify-center rounded-[50px] border-[2px] border-gray-200 transition-transform"
                             >
-                                <img src={a.icon} alt={a.name} />
+                                <img src={a.logo} alt={a.title} />
                             </SwiperSlide>
                         ))}
                     </Swiper>

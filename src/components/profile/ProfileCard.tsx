@@ -40,7 +40,9 @@ const ProfileCard = ({ profileData, getInitials }: ProfileCardProps) => {
                 </div>
 
                 {/* Баллы */}
-                <div className="text-center p-3 border-l border-gray-300">
+                <div
+                    onClick={() => navigate("/rating")}
+                    className="text-center p-3 border-l border-gray-300">
                     <div className="text-[18px] text-gray-900">{profileData.score || 0}</div>
                     <div className="text-xs text-gray-400">Баллы</div>
                 </div>

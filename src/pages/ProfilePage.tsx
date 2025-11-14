@@ -31,7 +31,6 @@ const ProfilePage = () => {
         return `${profileData.first_name?.[0] || ""}${profileData.last_name?.[0] || ""}`;
     };
 
-    // Логируем изменение состояния модалок
     useEffect(() => {
         console.log("Show Notifications:", showNotifications, "Show Burger Menu:", showBurgerMenu);
         document.body.style.overflow = showNotifications || showBurgerMenu ? 'hidden' : 'unset';
@@ -41,9 +40,7 @@ const ProfilePage = () => {
     const handleAcceptRequest = async (id: number) => {
         try {
             await ConnectService.acceptConnectRequest(id)
-            // удаляем запрос из списка
             setRequests(prev => prev.filter(r => r.connect_request_id !== id))
-            // увеличиваем количество коннектов у профиля
             setProfileData(prev => prev ? { ...prev, connects: (prev.connects || 0) + 1 } : prev)
         } catch (err) {
             console.error("Accept error:", err)
@@ -62,7 +59,6 @@ const ProfilePage = () => {
     }
 
 
-    // Загрузка профиля
     useEffect(() => {
         const fetchProfile = async () => {
             console.log("Fetching profile...");
