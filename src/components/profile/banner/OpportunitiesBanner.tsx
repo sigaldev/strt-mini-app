@@ -1,64 +1,56 @@
-import decor from "../../../assets/profileBanner/decor3.svg";
-import logo from "../../../assets/profileBanner/logo.svg";
-import bg from "../../../assets/profileBanner/banner-4.svg";
+import decor from "../../../assets/profileBanner/decor-4.svg";
 import star from "../../../assets/star.svg";
+import {ChevronRight} from "lucide-react";
+import rightImg from "../../../assets/profileBanner/forum.png";
 
 const OpportunitiesBanner = () => {
     return (
-        <div
-            className="text-[#fff] relative flex w-full px-[30px] pt-[20px] h-40 rounded-xl overflow-hidden bg-cover bg-center"
-            style={{ backgroundImage: `url(${bg})` }}
-        >
-            {/* Фиолетовое покрытие поверх фона */}
-            <div className="absolute inset-0 bg-gradient-to-tl from-[#7848FF]/85 to-[#000000]/85 z-0"></div>
+        <div className="text-[#fff] relative flex w-full px-[30px] pt-[20px] h-40 rounded-xl overflow-hidden bg-[#000]">
 
             {/* Текст + стрелка */}
-            <div className="relative z-10 space-y-2">
+            <div className="z-10 space-y-2">
                 <div className="flex items-center">
                     <span className="font-semibold text-[20px]">
-                        Хочу в команду
+                        Сезон форумов
                     </span>
+                    <ChevronRight />
                 </div>
-                <p className="text-[14px]">Студент РТ</p>
+                <p className="text-[14px]">Форумы на любой вкус,  <br/> выбирай активное студенчество! </p>
+            </div>
+
+            <div className="z-10 absolute right-[0] top-1/2 -translate-y-2/3 w-32">
+                <img src={rightImg} alt="" />
             </div>
 
             {/* Декор справа */}
             <img
                 src={decor}
                 alt=""
-                className="absolute top-0 right-0 h-full object-cover z-0 opacity-80"
+                className="absolute top-0 right-0 h-full object-cover z-0"
             />
 
             {/* Звезды */}
             <img
                 src={star}
                 alt=""
-                className="absolute h-16 right-0 bottom-[20px] z-0"
+                className="absolute h-16 left-1/2 bottom-[20px] z-0"
             />
 
             <img
                 src={star}
                 alt=""
-                className="absolute h-8 right-0 bottom-[50px] z-0"
+                className="absolute h-12 left-3 -translate-x-1 bottom-[20px] z-0 rotate-12"
             />
 
-            <img
-                src={star}
-                alt=""
-                className="absolute h-16 left-1/3 -translate-x-6 bottom-[30px] z-0"
-            />
 
-            <img
-                src={star}
-                alt=""
-                className="absolute h-12 left-1/2 -translate-x-6 top-[0px] z-0"
-            />
-
-            {/* Логотип */}
-            <img
-                src={logo}
-                alt=""
-                className="absolute top-3 right-3 z-10 h-[30px]"
+            {/* Фиолетовое свечение снизу */}
+            <div
+                className="
+                    absolute bottom-0 left-1
+                    w-full h-full
+                    bg-[radial-gradient(circle,_rgba(120,72,255,0.55)_0%,_rgba(120,72,255,0)_100%)]
+                    pointer-events-none
+                "
             />
         </div>
     );

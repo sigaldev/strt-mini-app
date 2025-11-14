@@ -33,7 +33,7 @@ const RatingPage = () => {
             const studentsData: Student[] = response.users.map((u: User) => ({
                 id: u.id,
                 name: u.full_name || `${u.first_name} ${u.last_name}`,
-                university: u.university?.name || "-",
+                university: u.university?.abbreviation || "-",
                 group: u.group_number || "-",
                 points: u.score || 0,
                 avatar: u.avatar?.medium?.url || u.avatar?.large?.url || u.avatar?.thumb?.url || "",
