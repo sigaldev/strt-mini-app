@@ -7,10 +7,12 @@ import RatingService, { type User } from "../components/api/service/RatingServic
 interface Student {
     id: number;
     name: string;
+    firstName: string;
+    lastName: string;
     university: string;
     group: string;
     points: number;
-    avatar: string;
+    avatar: string | null;
 }
 
 const RatingPage = () => {
@@ -33,10 +35,12 @@ const RatingPage = () => {
             const studentsData: Student[] = response.users.map((u: User) => ({
                 id: u.id,
                 name: u.full_name || `${u.first_name} ${u.last_name}`,
+                firstName: u.first_name || "",
+                lastName: u.last_name || "",
                 university: u.university?.abbreviation || "-",
                 group: u.group_number || "-",
                 points: u.score || 0,
-                avatar: u.avatar?.medium?.url || u.avatar?.large?.url || u.avatar?.thumb?.url || "",
+                avatar: u.avatar?.medium?.url || u.avatar?.large?.url || u.avatar?.thumb?.url || null,
             }));
 
             setStudents(prev => (newPage === 1 ? studentsData : [...prev, ...studentsData]));
@@ -73,6 +77,14 @@ const RatingPage = () => {
         student.university.toLowerCase().includes(searchQuery.toLowerCase()) ||
         student.group.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    const getInitials = (student: Student) => {
+        const first = student.firstName?.trim()?.[0] || student.name?.trim()?.[0] || "";
+        const last = student.lastName?.trim()?.[0]
+            || student.name?.trim().split(/\s+/)[1]?.[0]
+            || "";
+        return `${first}${last}`.toUpperCase();
+    };
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -140,12 +152,18 @@ const RatingPage = () => {
                                 onClick={() => navigate(`/user/${student.id}`)}
                                 className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition cursor-pointer flex items-center gap-4"
                             >
-                                <div className="w-14 h-14 rounded-full overflow-hidden flex items-center justify-center">
-                                    <img
-                                        src={student.avatar}
-                                        alt={student.name}
-                                        className="w-full h-full object-cover"
-                                    />
+                                <div className="w-14 h-14 rounded-full overflow-hidden flex items-center justify-center text-white text-lg font-semibold">
+                                    {student.avatar ? (
+                                        <img
+                                            src={student.avatar}
+                                            alt={student.name}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="bg-[#007AFF] w-full h-full flex items-center justify-center">
+                                            {getInitials(student)}
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="text-[#0177ff] font-bold text-lg w-6 text-center">
                                     {position}
