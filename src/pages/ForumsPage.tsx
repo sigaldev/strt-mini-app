@@ -36,11 +36,6 @@ const ForumsPage = () => {
     return (
         <div className="min-h-screen bg-white p-4 md:p-6 relative">
             <div className="flex justify-between items-center mb-6 mt-4">
-                <div className="absolute top-0 left-4 mt-6">
-                    <Button mode="link" onClick={() => setShowRarityInfo(true)}>
-                        Подробнее
-                    </Button>
-                </div>
                 <h1 className="text-gray-900 font-bold text-xl mx-auto">Форумы</h1>
             </div>
 
