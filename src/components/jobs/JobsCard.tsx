@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 import type { Vacancy } from "../api/service/VacanciesService.ts";
-import {Button} from "@maxhub/max-ui";
+import { Button } from "@maxhub/max-ui";
 
 const formatText = (text?: string) =>
     text
@@ -30,6 +30,17 @@ const buildDetails = (job: Vacancy) =>
         .filter(Boolean)
         .join("\n\n");
 
+const getContactButton = (job: Vacancy) => {
+    if (job.site) return { label: "Откликнуться", url: job.site };
+    if (job.vk) return { label: "Откликнуться", url: job.vk };
+    if (job.instagram) return { label: "Откликнуться", url: job.instagram };
+    if (job.telegram) return { label: "Откликнуться", url: job.telegram };
+    if (job.whatsapp) return { label: "Откликнуться", url: job.whatsapp };
+    if (job.email) return { label: "Откликнуться", url: `mailto:${job.email}` };
+    if (job.phone) return { label: "Откликнуться", url: `tel:${job.phone}` };
+    return null;
+};
+
 type JobsCardProps = {
     job: Vacancy;
     expanded: boolean;
@@ -51,10 +62,12 @@ const JobsCard = forwardRef<HTMLDivElement, JobsCardProps>(
         const details = buildDetails(job);
         const canExpand = Boolean(details);
 
+        const contact = getContactButton(job);
+
         return (
             <article
                 ref={ref}
-                className="mx-auto w-full  rounded-[15px] border border-[#ECECF5]
+                className="mx-auto w-full rounded-[15px] border border-[#ECECF5]
                     bg-white p-5 shadow-[0_18px_40px_rgba(10,18,61,0.04)] transition-shadow
                     hover:shadow-[0_20px_45px_rgba(10,18,61,0.08)]"
             >
@@ -87,15 +100,14 @@ const JobsCard = forwardRef<HTMLDivElement, JobsCardProps>(
                     )}
 
                     <div className="flex flex-wrap items-center gap-3">
-                        {job.site && expanded && (
+                        {contact && expanded && (
                             <Button
                                 size="medium"
-                                onClick={() => window.open(job.site, "_blank", "noopener,noreferrer")}
+                                onClick={() => window.open(contact.url, "_blank", "noopener,noreferrer")}
                             >
-                                Перейти к вакансии
+                                {contact.label}
                             </Button>
                         )}
-
 
                         {canExpand && (
                             <button
