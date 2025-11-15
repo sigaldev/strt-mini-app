@@ -86,7 +86,7 @@ const EventsPage = () => {
     return (
         <div className="min-h-screen bg-white p-4 md:p-6">
             {/* Header */}
-            <div className="flex justify-between items-center mb-8 mt-4 relative">
+            <div className="flex justify-between items-center mb-0 xs:mb-8 mt-4 relative">
                 <Button mode="link" onClick={() => setShowRarityInfo(true)}>Подробнее</Button>
                 <h1 className="absolute left-1/2 -translate-x-1/2 text-gray-900 font-bold text-xl">Мероприятия</h1>
             </div>

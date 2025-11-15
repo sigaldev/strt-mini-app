@@ -79,9 +79,11 @@ const UserProfilePage = () => {
                         {user.first_name} {user.last_name}
                     </h2>
                     <div className="flex gap-[5px] justify-center text-gray-500 text-sm">
-                        <p>{user.university?.abbreviation || "–"}</p>
+                        <p className="max-w-[200px] truncate">{user.university?.abbreviation || "–"}</p>
                         <p>|</p>
-                        <p>Группа: {user.group?.name || user.group_number || "–"}</p>
+                        <p className="max-w-[120px] truncate">
+                            Группа: {user.group?.name || user.group_number || "–"}
+                        </p>
                     </div>
                     {user.bio && (
                         <p className="text-gray-700 text-sm max-w-[300px]">{user.bio}</p>

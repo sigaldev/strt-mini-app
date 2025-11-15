@@ -124,7 +124,7 @@ const SchedulePage = () => {
             </div>
 
             {/* Navigation */}
-            <div className="bg-gray-100 rounded-2xl p-4 mb-6">
+            <div className="bg-gray-100 rounded-2xl px-2 py-4 xs:p-4 mb-6">
                 <div className="flex items-center justify-between mb-4">
                     <button onClick={() => setCurrentWeek(prev => prev - 1)} className="p-2 rounded-lg hover:bg-gray-200 transition">
                         <ChevronLeft className="w-5 h-5 text-gray-700" />
@@ -152,7 +152,7 @@ const SchedulePage = () => {
                             <div
                                 key={day}
                                 onClick={() => setSelectedDayIndex(i)}
-                                className={`p-3 rounded-xl cursor-pointer transition text-center
+                                className={`px-0 py-3 xs:p-3 rounded-xl cursor-pointer transition text-center
                                     ${selected ? "bg-blue-500 text-white" :
                                     today ? "bg-blue-100 text-blue-700 border border-blue-200" :
                                         "bg-gray-50 text-gray-700 hover:bg-gray-200"}`}

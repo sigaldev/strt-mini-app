@@ -6,19 +6,19 @@ import decor2 from "../../assets/discounts/banner/decor2.svg";
 const WeeklyHighlight = () => {
     return (
         <div
-            className="text-white relative flex w-full px-[10px] xs:px-[30px] pt-0  h-36 xs:h-40 rounded-xl overflow-hidden cursor-pointer hover:shadow-xl transition-shadow"
+            className="text-white relative flex w-full px-[10px] xs:px-[15px] sm:px-[30px] pt-0  h-36 xs:h-40 rounded-xl overflow-hidden cursor-pointer hover:shadow-xl transition-shadow"
             style={{ background: "#000" }}
         >
             {/* Текст + стрелка */}
             <div className="z-10 flex flex-col justify-center h-full space-y-2 px-2">
-                <div className="flex items-center font-semibold text-[20px] xs:text-[24px]">
+                <div className="flex items-center font-semibold text-[20px] xs:text-[22px] sm:text-[24px]">
                     Получить <br/>
                     Карту Студента
                 </div>
             </div>
 
             {/* Основные картинки */}
-            <div className="z-10 absolute rotate-12 right-[20px] top-1/2 -translate-y-1/3 w-[140px] xs:w-[180px] h-32">
+            <div className="z-10 absolute rotate-12 right-[20px] top-1/2 -translate-y-1/3 w-[140px] xs:w-[160px] sm:w-[180px] h-32">
                 <img className="rounded-2xl" src={rightImg} alt="" />
             </div>
 

@@ -115,11 +115,6 @@ const JobsPage = () => {
         });
     };
 
-
-
-
-
-    // ✅ Фронтовый поиск по (name + company_name)
     const filteredJobs = jobs.filter((job) => {
         const q = searchQuery.toLowerCase();
 
@@ -154,7 +149,7 @@ const JobsPage = () => {
                     <button
                         type="button"
                         onClick={() => setShowFilters(!showFilters)}
-                        className="flex w-full items-center justify-center gap-2 rounded-[20px]
+                        className="flex w-full items-center justify-center gap-2 rounded-2xl
                             border border-[#D9DCEB] bg-white px-4 py-3 text-sm font-semibold
                             text-[#1B1B29] shadow-sm"
                     >
