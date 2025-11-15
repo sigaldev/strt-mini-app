@@ -111,7 +111,7 @@ const RegisterPage: React.FC = () => {
             if (!formData.group_id) errs.push("Выберите группу");
         } else {
             // если групп нет — обязателен ручной ввод
-            if (!formData.group_number.trim()) errs.push("Введите номер группы вручную");
+            if (!formData.group_number.trim()) errs.push("Введите номер группы");
         }
 
         return errs;
@@ -187,7 +187,7 @@ const RegisterPage: React.FC = () => {
 
                     {formData.university_id && !loadingGroups && groups.length === 0 ? (
                         <Input
-                            placeholder="Введите номер группы вручную"
+                            placeholder="Введите номер группы"
                             name="group_number"
                             value={formData.group_number}
                             onChange={(e) =>
