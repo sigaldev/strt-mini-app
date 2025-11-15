@@ -1,12 +1,13 @@
 import { useState, useMemo, useEffect } from "react";
 import { Clock, MapPin, User as UserIcon, ChevronLeft, ChevronRight } from 'lucide-react';
 import { type DaySchedule, type ScheduleLesson, ScheduleService } from "../components/api/service/ScheduleService.ts";
+import { ProfileService } from "../components/api/service/ProfileService.ts";
 import comingSoon from "../assets/scheduler/comingSoon.svg";
 
-type LessonType = "lecture" | "practice" | "lab";
+type LessonType = "lecture" | "practice" | "lab" | "other";
 
 interface Lesson {
-    id: number;
+    id: string;
     subject: string;
     time: string;
     room: string;
@@ -20,38 +21,49 @@ const typeColors: Record<LessonType, string> = {
     lecture: "bg-blue-100 text-blue-800 border border-blue-200",
     practice: "bg-emerald-100 text-emerald-800 border border-emerald-200",
     lab: "bg-yellow-100 text-yellow-800 border border-yellow-200",
+    other: "bg-gray-100 text-gray-700 border border-gray-200",
 };
 
 const typeLabels: Record<LessonType, string> = {
     lecture: "Лекция",
     practice: "Практика",
     lab: "Лаб. работа",
+    other: "Занятие",
 };
 
 const weekDays = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"] as const;
+
+const normalizeDayIndex = (date: Date) => (date.getDay() + 6) % 7;
+
+const mapSubjectTypeToLessonType = (subjectType?: string | null): LessonType => {
+    const normalized = (subjectType || "").toUpperCase();
+    if (normalized.includes("ЛЕК")) return "lecture";
+    if (normalized.includes("ЛР")) return "lab";
+    if (normalized.includes("ПЗ")) return "practice";
+    return "other";
+};
 
 const SchedulePage = () => {
     const [schedule, setSchedule] = useState<Schedule>({
         ПН: [], ВТ: [], СР: [], ЧТ: [], ПТ: [], СБ: [], ВС: []
     });
     const [currentWeek, setCurrentWeek] = useState(0);
-    const [selectedDayIndex, setSelectedDayIndex] = useState(0);
+    const [selectedDayIndex, setSelectedDayIndex] = useState(() => normalizeDayIndex(new Date()));
     const [loading, setLoading] = useState(true);
     const [isEvenWeek, setIsEvenWeek] = useState<boolean | null>(null);
     const [noGroup, setNoGroup] = useState(false);
+    const [groupName, setGroupName] = useState<string>("");
 
     const mapScheduleLesson = (lesson: ScheduleLesson): Lesson => ({
-        id: lesson.subject.id + Math.random(),
-        subject: lesson.subject.name,
+        id: `${lesson.subject?.id ?? "lesson"}-${lesson.start_time}-${lesson.end_time}-${lesson.room || "room"}`,
+        subject: lesson.subject?.name || "Без названия",
         time: `${lesson.start_time} - ${lesson.end_time}`,
-        room: lesson.room,
-        teacher: lesson.teacher.name,
-        type: lesson.subject.type as LessonType,
+        room: lesson.room?.trim() ? lesson.room : "Аудитория уточняется",
+        teacher: lesson.teacher?.name || "Преподаватель не указан",
+        type: mapSubjectTypeToLessonType(lesson.subject?.type),
     });
 
-    const getWeekdayIndex = (dateString: string) => {
-        return new Date(dateString).getDay();
-    };
+    const getWeekdayIndex = (dateString: string) => normalizeDayIndex(new Date(dateString));
 
     const mapDaySchedule = (day: DaySchedule): Lesson[] => day.schedule.map(mapScheduleLesson);
 
@@ -96,6 +108,20 @@ const SchedulePage = () => {
         fetchSchedule();
     }, [currentWeek]);
 
+    useEffect(() => {
+        const fetchGroupName = async () => {
+            try {
+                const profile = await ProfileService.getProfile();
+                setGroupName(profile.group?.name || profile.group_number || "—");
+            } catch (error) {
+                console.error("Failed to load profile for schedule:", error);
+                setGroupName("—");
+            }
+        };
+
+        fetchGroupName();
+    }, []);
+
     const weekDates = useMemo(() => {
         const today = new Date();
         const mondayOffset = today.getDay() === 0 ? -6 : 1 - today.getDay();
@@ -116,14 +142,14 @@ const SchedulePage = () => {
     }, [weekDates]);
 
     const selectedDay = weekDays[selectedDayIndex];
-    const lessons = schedule[selectedDay];
+    const lessons = schedule[selectedDay] || [];
 
     return (
         <div className="min-h-screen bg-white p-4 md:p-6">
             {/* Header */}
             <div className="mb-6">
                 <h1 className="text-2xl font-bold text-gray-900 mb-1">Расписание</h1>
-                <p className="text-gray-600">Группа: ПМ-301</p>
+                <p className="text-gray-600">Группа: {groupName || "—"}</p>
                 {isEvenWeek !== null && (
                     <p className="text-gray-600 text-sm mt-1">
                         {isEvenWeek ? "Чётная неделя" : "Нечётная неделя"}

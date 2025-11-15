@@ -5,7 +5,7 @@ export interface ScheduleLesson {
     start_time: string;
     end_time: string;
     room: string;
-    teacher: { id: number; name: string };
+    teacher: { id: number; name: string } | null;
     subject: { id: number; name: string; type: string };
 }
 
