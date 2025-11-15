@@ -6,7 +6,7 @@ import AchievementsSlider from "../components/profile/AchievementsSlider";
 import NotificationsModal from "../components/profile/NotificationsModal";
 import BurgerOverlay from "../components/profile/BurgerOverlay";
 import BannersSlider from "../components/profile/BannerSlider.tsx";
-import CareerBanner from "../components/profile/banner/CareerBanner.tsx";
+import DiscountsBanner from "../components/profile/banner/DiscountsBanner.tsx";
 import ScholarshipBanner from "../components/profile/banner/ScholarshipBanner.tsx";
 import ForumsBanner from "../components/profile/banner/ForumsBanner.tsx";
 import { ProfileService, type Profile } from "../components/api/service/ProfileService.ts";
@@ -21,7 +21,7 @@ const ProfilePage = () => {
     const [loading, setLoading] = useState(true);
 
     const banners = [
-        <CareerBanner key="career" />,
+        <DiscountsBanner key="career" />,
         <ScholarshipBanner key="scholarship" />,
         <ForumsBanner key="opportunities" />,
     ];

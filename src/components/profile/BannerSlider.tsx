@@ -12,7 +12,8 @@ const BannersSlider = ({ banners }: BannersSliderProps) => {
     return (
         <div className="mb-6">
             <Swiper
-                modules={[Autoplay, Pagination]}
+                // modules={[Autoplay, Pagination]}
+                modules={[Pagination]}
                 autoplay={{ delay: 2000, disableOnInteraction: false }}
                 loop={true}
                 spaceBetween={10}
