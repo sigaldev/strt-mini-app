@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { Clock, MapPin, User as UserIcon, ChevronLeft, ChevronRight } from 'lucide-react';
 import { type DaySchedule, type ScheduleLesson, ScheduleService } from "../components/api/service/ScheduleService.ts";
+import comingSoon from "../assets/scheduler/comingSoon.svg";
 
 type LessonType = "lecture" | "practice" | "lab";
 
@@ -37,6 +38,7 @@ const SchedulePage = () => {
     const [selectedDayIndex, setSelectedDayIndex] = useState(0);
     const [loading, setLoading] = useState(true);
     const [isEvenWeek, setIsEvenWeek] = useState<boolean | null>(null);
+    const [noGroup, setNoGroup] = useState(false);
 
     const mapScheduleLesson = (lesson: ScheduleLesson): Lesson => ({
         id: lesson.subject.id + Math.random(),
@@ -68,6 +70,7 @@ const SchedulePage = () => {
                 const date_to = sunday.toLocaleDateString("ru-RU");
 
                 const data = await ScheduleService.getSchedule(date_from, date_to);
+                setNoGroup(false);
 
                 const newSchedule: Schedule = { ПН: [], ВТ: [], СР: [], ЧТ: [], ПТ: [], СБ: [], ВС: [] };
                 if (data.schedule.length) setIsEvenWeek(data.schedule[0].is_even_week);
@@ -79,6 +82,11 @@ const SchedulePage = () => {
 
                 setSchedule(newSchedule);
             } catch (error) {
+                if (error.message === "NO_GROUP_ID") {
+                    setNoGroup(true);
+                    setLoading(false);
+                    return;
+                }
                 console.error("Failed to load schedule:", error);
             } finally {
                 setLoading(false);
@@ -166,7 +174,14 @@ const SchedulePage = () => {
             </div>
 
             {/* Lessons */}
-            {loading ? (
+            {noGroup ? (
+                <div className="bg-gray-100 rounded-2xl p-8 text-center text-gray-600">
+                    <img className="mx-auto mb-6" src={comingSoon} alt=""/>
+                    <h3 className="font-semibold text-[#000] mb-2">Скоро будет доступно</h3>
+                    <p className="text-[14px]">Твоего университета пока нет
+                        в списке, <br/> уже работаем над этим</p>
+                </div>
+            ) : loading ? (
                 <div className="text-center text-gray-500">Загрузка расписания...</div>
             ) : lessons.length === 0 ? (
                 <div className="bg-gray-100 rounded-2xl p-8 text-center text-gray-600">

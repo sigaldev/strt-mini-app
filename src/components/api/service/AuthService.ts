@@ -115,9 +115,18 @@ class AuthService {
             formData.append("password", password);
             formData.append("first_name", first_name.replace(/[^A-Za-zА-Яа-яЁё]/g, ""));
             formData.append("last_name", last_name.replace(/[^A-Za-zА-Яа-яЁё]/g, ""));
-            formData.append("group_number", group_number);
             formData.append("university_id", String(university_id));
-            formData.append("group_id", String(group_id));
+
+            if (group_id && group_id !== "null" && group_id !== "") {
+                formData.append("group_id", group_id);
+                authLogger.info("Using group_id", { group_id });
+            } else if (group_number && group_number.trim() !== "") {
+                formData.append("group_number", group_number.trim());
+                authLogger.info("Using custom group_number", { group_number });
+            } else {
+                authLogger.warn("No group provided");
+            }
+
 
             if (avatar) {
                 authLogger.info("Appending avatar to FormData", {
@@ -159,9 +168,59 @@ class AuthService {
 
             return step3Response.data.user;
         } catch (error: unknown) {
-            const axiosError = error as AxiosError;
-            authLogger.error("Registration process failed", axiosError.response?.data || axiosError.message);
-            throw error;
+            const axiosError = error as AxiosError<any>;
+            const backend = axiosError.response?.data;
+
+            authLogger.error("Registration process failed", backend || axiosError.message);
+
+            let messages: string[] = [];
+
+            // ==============================
+            //  1) errors: [{ error: ["..."] }]
+            // ==============================
+            if (backend?.errors && Array.isArray(backend.errors)) {
+                messages = backend.errors.flatMap((item: any) => {
+                    if (Array.isArray(item.error)) return item.error;
+                    if (typeof item.error === "string") return [item.error];
+                    return [];
+                });
+            }
+
+            // ==============================
+            // 2) error: ["..."]
+            // ==============================
+            if (messages.length === 0 && Array.isArray(backend?.error)) {
+                messages = backend.error;
+            }
+
+            // ==============================
+            // 3) error: "..."
+            // ==============================
+            if (messages.length === 0 && typeof backend?.error === "string") {
+                messages = [backend.error];
+            }
+
+            // ==============================
+            // 4) ловим все строки внутри backend (универсальный fallback)
+            // ==============================
+            if (messages.length === 0 && backend && typeof backend === "object") {
+                const collected = Object.values(backend)
+                    .flat()
+                    .filter((x: any) => typeof x === "string");
+
+                if (collected.length > 0) {
+                    messages = collected;
+                }
+            }
+
+            // ==============================
+            // 5) Если ничего не нашли — дефолт
+            // ==============================
+            if (messages.length === 0) {
+                messages = ["Произошла ошибка"];
+            }
+
+            throw new Error(messages.join(", "));
         }
     }
 

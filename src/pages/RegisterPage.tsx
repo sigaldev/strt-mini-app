@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff, Camera } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { Input, Button } from "@maxhub/max-ui";
 import AuthService, { hasRefreshToken } from "../components/api/service/AuthService";
 import UniversityService, { type StudentGroup, type University } from "../components/api/service/UniversityService.ts";
@@ -14,7 +14,7 @@ interface RegisterFormData {
     last_name: string;
     university_id: number | null;
     group_id: number | null;
-    group_number: string; // для отображения текста в поле
+    group_number: string;
     avatar: File | null;
 }
 
@@ -89,19 +89,40 @@ const RegisterPage: React.FC = () => {
 
     const validateForm = (): string[] => {
         const errs: string[] = [];
-        if (!formData.first_name.match(/^[A-Za-zА-Яа-яЁё]+$/)) errs.push("Имя должно содержать только буквы");
-        if (!formData.last_name.match(/^[A-Za-zА-Яа-яЁё]+$/)) errs.push("Фамилия должна содержать только буквы");
-        if (!formData.phone_number.match(/^\+7\d{10}$/)) errs.push("Телефон должен быть в формате +7XXXXXXXXXX");
-        if (!formData.password || formData.password.length < 6) errs.push("Пароль должен быть не менее 6 символов");
-        if (!formData.university_id) errs.push("Выберите университет");
-        if (!formData.group_id) errs.push("Выберите группу");
+
+        if (!formData.first_name.match(/^[A-Za-zА-Яа-яЁё]+$/))
+            errs.push("Имя должно содержать только буквы");
+
+        if (!formData.last_name.match(/^[A-Za-zА-Яа-яЁё]+$/))
+            errs.push("Фамилия должна содержать только буквы");
+
+        if (!formData.phone_number.match(/^\+7\d{10}$/))
+            errs.push("Телефон должен быть в формате +7XXXXXXXXXX");
+
+        if (!formData.password || formData.password.length < 6)
+            errs.push("Пароль должен быть не менее 6 символов");
+
+        if (!formData.university_id)
+            errs.push("Выберите университет");
+
+        // 👉 главное изменение:
+        if (groups.length > 0) {
+            // если группы есть — обязателен group_id
+            if (!formData.group_id) errs.push("Выберите группу");
+        } else {
+            // если групп нет — обязателен ручной ввод
+            if (!formData.group_number.trim()) errs.push("Введите номер группы вручную");
+        }
+
         return errs;
     };
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setErrors([]);
         setLoading(true);
+        window.scrollTo(0, 0);
 
         const validationErrors = validateForm();
         if (validationErrors.length) {
@@ -122,8 +143,9 @@ const RegisterPage: React.FC = () => {
                 formData.avatar || undefined
             );
             navigate("/profile");
-        } catch {
-            setErrors(["Ошибка регистрации. Попробуйте снова."]);
+        } catch (err: any) {
+            const message = err?.message || "Неизвестная ошибка";
+            setErrors([message]);
         } finally {
             setLoading(false);
         }
@@ -163,21 +185,37 @@ const RegisterPage: React.FC = () => {
                         onChange={(opt) => setFormData(prev => ({ ...prev, university_id: Number(opt.value), group_id: null, group_number: "" }))}
                     />
 
-                    <CustomSelect
-                        placeholder="Выберите группу"
-                        options={groups.map(g => ({ value: g.id, label: g.name }))}
-                        value={groups.find(g => g.id === formData.group_id) ? { value: formData.group_id!, label: groups.find(g => g.id === formData.group_id)!.name } : null}
-                        searchable
-                        onSearch={(value) => setGroupQuery(value)}
-                        onChange={(opt) => {
-                            const selectedGroup = groups.find(g => g.id === Number(opt.value));
-                            setFormData(prev => ({
-                                ...prev,
-                                group_id: Number(opt.value),
-                                group_number: selectedGroup?.name || ""
-                            }));
-                        }}
-                    />
+                    {formData.university_id && !loadingGroups && groups.length === 0 ? (
+                        <Input
+                            placeholder="Введите номер группы вручную"
+                            name="group_number"
+                            value={formData.group_number}
+                            onChange={(e) =>
+                                setFormData(prev => ({ ...prev, group_number: e.target.value }))
+                            }
+                            mode="secondary"
+                        />
+                    ) : (
+                        <CustomSelect
+                            placeholder="Выберите группу"
+                            options={groups.map(g => ({ value: g.id, label: g.name }))}
+                            value={
+                                groups.find(g => g.id === formData.group_id)
+                                    ? { value: formData.group_id!, label: groups.find(g => g.id === formData.group_id)!.name }
+                                    : null
+                            }
+                            searchable
+                            onSearch={(value) => setGroupQuery(value)}
+                            onChange={(opt) => {
+                                const selectedGroup = groups.find(g => g.id === Number(opt.value));
+                                setFormData(prev => ({
+                                    ...prev,
+                                    group_id: Number(opt.value),
+                                    group_number: selectedGroup?.name || ""
+                                }));
+                            }}
+                        />
+                    )}
 
                     {loadingGroups && <p className="text-gray-400 text-sm mt-1">Загрузка групп…</p>}
 
