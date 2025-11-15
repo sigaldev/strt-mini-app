@@ -98,7 +98,7 @@ const EventsPage = () => {
                         Студент РТ рекомендует
                     </h3>
                     <div
-                        className="flex items-center gap-4 px-4 py-6 rounded-2xl cursor-pointer hover:shadow-md transition-shadow mb-6"
+                        className=" flex items-center gap-4 px-4 py-6 rounded-2xl cursor-pointer hover:shadow-md transition-shadow mb-6"
                         style={{
                             backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url(${recommendedEvent.head.background.medium})`,
                             backgroundSize: 'cover',
@@ -109,7 +109,7 @@ const EventsPage = () => {
                         <img
                             src={recommendedEvent.head.logo.thumb}
                             alt=""
-                            className="w-32 h-[120px]"
+                            className="rounded-3xl w-32 h-[120px]"
                         />
                         <div>
                             <h4 className="text-white text-xl">

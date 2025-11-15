@@ -10,17 +10,17 @@ const ScholarshipBanner = () => {
     return (
         <div
             onClick={() => navigate('/scholarship')}
-            className="text-[#fff] relative flex w-full px-[30px] pt-[20px] h-40 rounded-xl overflow-hidden bg-[#000]">
+            className="text-[#fff] relative flex w-full px-[15px] xs:px-[30px] pt-[20px] h-40 rounded-xl overflow-hidden bg-[#000]">
 
             {/* Текст + стрелка */}
             <div className="z-10 space-y-2">
                 <div className="flex items-center">
-                    <span className="font-semibold text-[20px]">
+                    <span className="font-semibold text-[16px] xs:text-[20px]">
                         Стипендии
                     </span>
                     <ChevronRight />
                 </div>
-                <p className="text-[14px]">Твоя финансовая поддержка <br/> во время учёбы </p>
+                <p className="text-[12px] xs:text-[14px]">Твоя финансовая поддержка <br/> во время учёбы </p>
             </div>
 
             <div className="z-10 absolute right-[0] top-1/2 -translate-y-2/3 scale-125">

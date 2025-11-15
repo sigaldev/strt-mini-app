@@ -95,7 +95,7 @@ const ProfilePage = () => {
     if (loading || !profileData) return <Loader />;
 
     return (
-        <div className="min-h-screen bg-gray-50 p-4 md:p-6 overflow-hidden">
+        <div className="min-h-screen bg-gray-50 py-4 px-1 xs:p-4 md:p-6 overflow-hidden">
             <Header
                 setShowNotifications={setShowNotifications}
                 setShowBurgerMenu={setShowBurgerMenu}
