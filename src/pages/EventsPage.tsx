@@ -95,7 +95,7 @@ const EventsPage = () => {
             {recommendedEvent && (
                 <>
                     <h3 className="text-lg font-semibold text-white mb-4">
-                        Студент РТ рекомендует
+                        СТРТ рекомендует
                     </h3>
                     <div
                         className=" flex items-center gap-4 px-4 py-6 rounded-2xl cursor-pointer hover:shadow-md transition-shadow mb-6"

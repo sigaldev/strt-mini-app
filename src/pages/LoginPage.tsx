@@ -74,7 +74,7 @@ const LoginPage: React.FC = () => {
         <div className="min-h-screen bg-white flex items-center justify-center p-4 md:p-6">
             <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 border border-gray-200">
                 <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Студент РТ</h1>
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">СТРТ</h1>
                     <p className="text-gray-500">Войдите в свой аккаунт</p>
                 </div>
 

@@ -14,7 +14,7 @@ const Layout = () => {
             {/* Desktop Sidebar */}
             <aside className="hidden md:fixed md:left-0 md:top-0 md:h-screen md:w-64 md:flex md:flex-col md:bg-white md:border-r md:border-gray-200">
                 <div className="p-6 border-b border-gray-200">
-                    <h1 className="text-2xl font-bold text-gray-900">Студент РТ</h1>
+                    <h1 className="text-2xl font-bold text-gray-900">СТРТ</h1>
                     <p className="text-sm text-gray-500 mt-1">Студенческий портал</p>
                 </div>
 
