@@ -40,7 +40,7 @@ const EventDetailPage = () => {
     const plainDescription = blocksByType["plain_description"]?.body;
     const infoBlock = blocksByType["info"];
     const photosBlock = blocksByType["photos"]?.photos || [];
-    const buttonBlock = blocksByType["buttons"]?.buttons?.[0];
+    const buttonBlock = blocksByType["buttons"]?.buttons?.filter(btn => btn.type != 'other');
 
     console.log(plainDescription);
     console.log(infoBlock);
