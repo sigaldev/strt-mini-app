@@ -10,7 +10,7 @@ const InnerAppRouter = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        setupInterceptors(navigate);
+        return setupInterceptors(navigate);
     }, [navigate]);
 
     const renderRoutes = (config: typeof routesConfig) =>

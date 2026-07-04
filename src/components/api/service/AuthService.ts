@@ -47,33 +47,47 @@ interface BackendErrorResponse {
     [key: string]: unknown;
 }
 
+const tokenCookieOptions = {
+    path: "/",
+    sameSite: "lax" as const,
+    secure: import.meta.env.PROD,
+};
+
 const isBackendErrorResponse = (value: unknown): value is BackendErrorResponse =>
     typeof value === "object" && value !== null;
 
+const getAxiosLogMeta = (error: AxiosError) => ({
+    status: error.response?.status,
+    message: error.message,
+});
+
 const authLogger = {
-    info: (message: string, data?: unknown) =>
-        console.log(`[AUTH-SERVICE] [INFO] ${new Date().toISOString()}: ${message}`, data || ''),
-    error: (message: string, error?: unknown) =>
-        console.error(`[AUTH-SERVICE] [ERROR] ${new Date().toISOString()}: ${message}`, error || ''),
-    warn: (message: string, data?: unknown) =>
-        console.warn(`[AUTH-SERVICE] [WARN] ${new Date().toISOString()}: ${message}`, data || ''),
-    debug: (message: string, data?: unknown) =>
-        console.debug(`[AUTH-SERVICE] [DEBUG] ${new Date().toISOString()}: ${message}`, data || '')
+    info: (message: string, data?: unknown) => {
+        if (import.meta.env.DEV) console.log(`[AUTH-SERVICE] [INFO] ${new Date().toISOString()}: ${message}`, data || '');
+    },
+    error: (message: string, error?: unknown) => {
+        if (import.meta.env.DEV) console.error(`[AUTH-SERVICE] [ERROR] ${new Date().toISOString()}: ${message}`, error || '');
+    },
+    warn: (message: string, data?: unknown) => {
+        if (import.meta.env.DEV) console.warn(`[AUTH-SERVICE] [WARN] ${new Date().toISOString()}: ${message}`, data || '');
+    },
+    debug: (message: string, data?: unknown) => {
+        if (import.meta.env.DEV) console.debug(`[AUTH-SERVICE] [DEBUG] ${new Date().toISOString()}: ${message}`, data || '');
+    }
 };
 
 class AuthService {
     async login(phone: string, password: string): Promise<LoginResponse> {
-        authLogger.info("Login attempt", { phone });
+        authLogger.info("Login attempt");
 
         try {
             const response: AxiosResponse<SignInResponse> = await api.post("/api/v1/sign_in/", { phone_number: phone, password });
             const { token, refresh_token } = response.data;
 
-            Cookies.set("STRT_MAX_ACCESS_TOKEN", token);
-            Cookies.set("STRT_MAX_REFRESH_TOKEN", refresh_token);
+            Cookies.set("STRT_MAX_ACCESS_TOKEN", token, tokenCookieOptions);
+            Cookies.set("STRT_MAX_REFRESH_TOKEN", refresh_token, tokenCookieOptions);
 
             authLogger.info("Login successful", {
-                phone,
                 hasAccessToken: !!token,
                 hasRefreshToken: !!refresh_token
             });
@@ -81,7 +95,7 @@ class AuthService {
             return { access: token, refresh: refresh_token };
         } catch (error: unknown) {
             const axiosError = error as AxiosError;
-            authLogger.error("Login failed", axiosError.response?.data || axiosError.message);
+            authLogger.error("Login failed", getAxiosLogMeta(axiosError));
             throw error;
         }
     }
@@ -97,12 +111,7 @@ class AuthService {
         avatar?: File
     ): Promise<UserProfile | undefined> {
         authLogger.info("Starting registration process", {
-            phone_number,
-            first_name,
-            last_name,
-            group_number,
             has_avatar: !!avatar,
-            avatar_name: avatar?.name,
             avatar_size: avatar?.size,
             avatar_type: avatar?.type
         });
@@ -114,10 +123,10 @@ class AuthService {
                 { phone_number }
             );
 
-            authLogger.debug("Step1 response", step1Response.data);
+            authLogger.debug("Step1 response", { status: step1Response.data.status });
 
             if (step1Response.data.status !== "validated") {
-                authLogger.warn("Phone validation failed", step1Response.data);
+                authLogger.warn("Phone validation failed");
                 return undefined;
             }
 
@@ -135,7 +144,7 @@ class AuthService {
                 authLogger.info("Using group_id", { group_id });
             } else if (group_number && group_number.trim() !== "") {
                 formData.append("group_number", group_number.trim());
-                authLogger.info("Using custom group_number", { group_number });
+                authLogger.info("Using custom group_number");
             } else {
                 authLogger.warn("No group provided");
             }
@@ -143,7 +152,6 @@ class AuthService {
 
             if (avatar) {
                 authLogger.info("Appending avatar to FormData", {
-                    name: avatar.name,
                     size: avatar.size,
                     type: avatar.type
                 });
@@ -152,31 +160,30 @@ class AuthService {
                 authLogger.warn("No avatar provided");
             }
 
-            // Логируем содержимое FormData (имена полей)
-            for (const pair of formData.entries()) {
-                authLogger.debug("FormData entry", { key: pair[0], value: pair[1] });
-            }
-
             const step3Response: AxiosResponse<SignUpStep3Response> = await api.post(
                 "/api/v1/sign_up/step3/",
                 formData,
                 { headers: { "Content-Type": "multipart/form-data" } }
             );
 
-            authLogger.info("Step3 response received", step3Response.data);
+            authLogger.info("Step3 response received", {
+                hasUser: !!step3Response.data.user,
+                hasTokens: !!step3Response.data.token && !!step3Response.data.refresh_token,
+                hasAvatar: !!step3Response.data.user?.avatar,
+            });
 
             if (step3Response.data.token && step3Response.data.refresh_token) {
-                Cookies.set("STRT_MAX_ACCESS_TOKEN", step3Response.data.token);
-                Cookies.set("STRT_MAX_REFRESH_TOKEN", step3Response.data.refresh_token);
+                Cookies.set("STRT_MAX_ACCESS_TOKEN", step3Response.data.token, tokenCookieOptions);
+                Cookies.set("STRT_MAX_REFRESH_TOKEN", step3Response.data.refresh_token, tokenCookieOptions);
                 authLogger.info("Tokens stored in cookies");
             }
 
             if (!step3Response.data.user) {
-                authLogger.warn("Step3 response has no user object", step3Response.data);
+                authLogger.warn("Step3 response has no user object");
             } else if (!step3Response.data.user.avatar) {
-                authLogger.warn("User avatar is null in response", step3Response.data.user);
+                authLogger.warn("User avatar is null in response");
             } else {
-                authLogger.info("User avatar URL", step3Response.data.user.avatar);
+                authLogger.info("User avatar received");
             }
 
             return step3Response.data.user;
@@ -184,7 +191,7 @@ class AuthService {
             const axiosError = error as AxiosError<unknown>;
             const backend = axiosError.response?.data;
 
-            authLogger.error("Registration process failed", backend || axiosError.message);
+            authLogger.error("Registration process failed", getAxiosLogMeta(axiosError));
 
             let messages: string[] = [];
             const backendData = isBackendErrorResponse(backend) ? backend : undefined;
@@ -253,21 +260,21 @@ class AuthService {
             const response: AxiosResponse<RefreshTokenResponse> = await api.post("/api/v1/sign_in/refresh/", { refresh });
             const { access } = response.data;
 
-            Cookies.set("STRT_MAX_ACCESS_TOKEN", access);
+            Cookies.set("STRT_MAX_ACCESS_TOKEN", access, tokenCookieOptions);
             authLogger.info("Token refreshed successfully");
 
             return access;
         } catch (error: unknown) {
             const axiosError = error as AxiosError;
-            authLogger.error("Token refresh failed", axiosError.response?.data || axiosError.message);
+            authLogger.error("Token refresh failed", getAxiosLogMeta(axiosError));
             throw error;
         }
     }
 
     logout(): void {
         authLogger.info("User logout");
-        Cookies.remove("STRT_MAX_ACCESS_TOKEN");
-        Cookies.remove("STRT_MAX_REFRESH_TOKEN");
+        Cookies.remove("STRT_MAX_ACCESS_TOKEN", tokenCookieOptions);
+        Cookies.remove("STRT_MAX_REFRESH_TOKEN", tokenCookieOptions);
     }
 }
 

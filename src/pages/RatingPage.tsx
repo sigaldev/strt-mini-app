@@ -15,6 +15,8 @@ interface Student {
     avatar: string | null;
 }
 
+const USERS_PER_PAGE = 50;
+
 const RatingPage = () => {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState<"overall" | "season">("overall");
@@ -25,11 +27,10 @@ const RatingPage = () => {
     const [hasMore, setHasMore] = useState(true);
 
     const fetchUsers = useCallback(async (newPage = 1) => {
-        if (!hasMore && newPage !== 1) return;
         try {
             setLoading(true);
             console.log(`RatingPage: fetching users page ${newPage}...`);
-            const response = await RatingService.getUsers(newPage, 50, searchQuery);
+            const response = await RatingService.getUsers(newPage, USERS_PER_PAGE, searchQuery);
             console.log("RatingPage: users fetched:", response);
 
             const studentsData: Student[] = response.users.map((u: User) => ({
@@ -44,14 +45,14 @@ const RatingPage = () => {
             }));
 
             setStudents(prev => (newPage === 1 ? studentsData : [...prev, ...studentsData]));
-            setHasMore(response.users.length === 50); // если меньше 50 — значит больше нет
+            setHasMore(response.users.length === USERS_PER_PAGE); // если меньше USERS_PER_PAGE — значит больше нет
             setPage(newPage);
         } catch (err) {
             console.error("RatingPage: error fetching users", err);
         } finally {
             setLoading(false);
         }
-    }, [searchQuery, hasMore]);
+    }, [searchQuery]);
 
     // Перезагрузка при изменении searchQuery или активной вкладки
     useEffect(() => {
