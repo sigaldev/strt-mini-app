@@ -1,10 +1,11 @@
 import { Button } from "@maxhub/max-ui"
+import type { ConnectRequest } from "../api/service/ConnectService.ts";
 
 interface NotificationsModalProps {
     showNotifications: boolean
     setShowNotifications: (val: boolean) => void
-    requests?: any[]
-    setRequests?: React.Dispatch<React.SetStateAction<any[]>>
+    requests?: ConnectRequest[]
+    setRequests?: React.Dispatch<React.SetStateAction<ConnectRequest[]>>
     onAcceptRequest?: (id: number) => void // новый пропс
     onRejectRequest?: (id: number) => void // новый пропс
     loading?: boolean

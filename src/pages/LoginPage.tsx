@@ -10,6 +10,15 @@ type Logger = {
     debug: (message: string, data?: unknown) => void;
 };
 
+const getLoginErrorMessage = (err: unknown) => {
+    if (typeof err === "object" && err !== null && "response" in err) {
+        const data = (err as { response?: { data?: { errors?: { error?: string[] }[] } } }).response?.data;
+        return data?.errors?.[0]?.error?.[0] || "Произошла ошибка при входе";
+    }
+
+    return "Произошла ошибка при входе";
+};
+
 const logger: Logger = {
     info: (message, data) => console.log(`[INFO] ${new Date().toISOString()}: ${message}`, data || ''),
     error: (message, data) => console.error(`[ERROR] ${new Date().toISOString()}: ${message}`, data || ''),
@@ -32,7 +41,7 @@ const LoginPage: React.FC = () => {
         if (hasRefreshToken()) {
             navigate("/profile");
         }
-    }, []);
+    }, [navigate]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -56,10 +65,7 @@ const LoginPage: React.FC = () => {
         } catch (err: unknown) {
             logger.error("Login failed", err);
 
-            const message =
-                typeof err === "object" && err !== null && "response" in err
-                    ? (err as any).response?.data?.errors?.[0]?.error?.[0] || "Произошла ошибка при входе"
-                    : "Произошла ошибка при входе";
+            const message = getLoginErrorMessage(err);
 
             setError(message);
 

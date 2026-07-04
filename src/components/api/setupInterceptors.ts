@@ -7,21 +7,6 @@ interface RetryAxiosRequestConfig extends InternalAxiosRequestConfig {
 }
 
 export function setupInterceptors(navigate: (path: string) => void) {
-    // --- Request interceptor ---
-    api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-        // Токен в cookie берём прямо в каждом запросе
-        const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("STRT_MAX_ACCESS_TOKEN="))
-            ?.split("=")[1];
-
-        if (token && config.headers) {
-            config.headers["Authorization"] = `Bearer ${token}`;
-        }
-
-        return config;
-    });
-
     // --- Response interceptor ---
     api.interceptors.response.use(
         (response) => response,

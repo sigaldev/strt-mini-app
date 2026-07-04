@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Calendar, MapPin, Users } from "lucide-react";
+import { ArrowLeft, Calendar, MapPin } from "lucide-react";
 import { Button } from "@maxhub/max-ui";
-import EventService, { type Event } from "../components/api/service/EventService.ts";
+import EventService, {
+    type Event,
+    type EventBlockData,
+    type EventButton,
+    type EventPhoto
+} from "../components/api/service/EventService.ts";
 import Loader from "../components/Loader.tsx";
 
 const EventDetailPage = () => {
@@ -17,7 +22,7 @@ const EventDetailPage = () => {
             try {
                 setLoading(true);
                 const data = await EventService.getEventById(Number(id));
-                setEvent(data.event);
+                setEvent(data);
             } catch (err) {
                 console.error("EventDetailPage: error loading event:", err);
             } finally {
@@ -30,22 +35,17 @@ const EventDetailPage = () => {
     if (loading || !event) return <Loader />;
 
     const head = event.head;
-    const blocksByType: Record<string, any> = {};
-    event.blocks.forEach((block: any) => {
-        const type = block.type; // тип блока
-        blocksByType[type] = block.data;
+    const blocksByType: Record<string, EventBlockData> = {};
+    event.blocks.forEach((block) => {
+        blocksByType[block.type] = block.data;
     });
 
 // Теперь достаём данные по типу
     const plainDescription = blocksByType["plain_description"]?.body;
     const infoBlock = blocksByType["info"];
-    const photosBlock = blocksByType["photos"]?.photos || [];
-    const buttonBlock = blocksByType["buttons"]?.buttons?.filter(btn => btn.type != 'other');
-
-    console.log(plainDescription);
-    console.log(infoBlock);
-    console.log(photosBlock);
-    console.log(buttonBlock);
+    const photosBlock: EventPhoto[] = blocksByType["photos"]?.photos || [];
+    const buttonBlock: EventButton | undefined = blocksByType["buttons"]?.buttons
+        ?.find((btn) => btn.button_type !== "other" && btn.type !== "other");
 
     return (
         <div className="min-h-screen bg-white">

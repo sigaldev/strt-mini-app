@@ -12,10 +12,14 @@ interface Group {
     name: string;
 }
 
+interface ImageVariant {
+    url: string | null;
+}
+
 interface Avatar {
-    large: string;
-    medium: string;
-    thumb: string;
+    large?: ImageVariant;
+    medium?: ImageVariant;
+    thumb?: ImageVariant;
 }
 
 interface LevelBonusPartner {

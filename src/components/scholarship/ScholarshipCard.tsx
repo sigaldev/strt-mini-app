@@ -1,4 +1,4 @@
-import { forwardRef, useState } from "react";
+import { forwardRef } from "react";
 import type { Scholarship } from "../api/service/ScholarshipService.ts";
 import { Button } from "@maxhub/max-ui";
 

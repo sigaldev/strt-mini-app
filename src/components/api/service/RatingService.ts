@@ -1,9 +1,9 @@
 import api from "../api.ts"; // твой pre-configured axios instance
 
 export interface StudentAvatar {
-    large: string;
-    medium: string;
-    thumb: string;
+    large?: { url: string | null };
+    medium?: { url: string | null };
+    thumb?: { url: string | null };
 }
 
 export interface University {
@@ -25,13 +25,28 @@ export interface User {
     avatar: StudentAvatar;
     score: number;
     university: University;
+    group?: {
+        id: number;
+        name: string;
+    };
+    rank?: string;
+    connects?: number;
+    bio?: string;
+    in_connect?: boolean;
+    is_connect_sent?: boolean;
+    achievements?: {
+        id: string | number;
+        title?: string;
+        name?: string;
+        logo?: {
+            medium?: string;
+            original?: string;
+        };
+    }[];
 }
 
 export interface UsersResponse {
-    count: number;
-    next: string | null;
-    previous: string | null;
-    results: User[];
+    users: User[];
 }
 
 class RatingService {
@@ -50,7 +65,7 @@ class RatingService {
         universityIds?: number[],
         cityIds?: number[]
     ): Promise<UsersResponse> {
-        const params: Record<string, any> = { page, per_page };
+        const params: Record<string, string | number> = { page, per_page };
 
         if (query) params.query = query;
         if (universityIds) params.university_id = universityIds.join(",");
@@ -68,7 +83,7 @@ class RatingService {
         }
     }
 
-    static async getUserById(id: number) {
+    static async getUserById(id: number): Promise<{ user: User }> {
         console.log(`[RatingService] Fetching user with ID: ${id}`);
         try {
             const resp = await api.get(`/api/v1/user/${id}/`);

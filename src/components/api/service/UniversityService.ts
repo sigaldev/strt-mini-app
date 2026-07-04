@@ -16,10 +16,7 @@ export interface StudentGroup {
 }
 
 export interface GroupsResponse {
-    count: number;
-    next: string | null;
-    previous: string | null;
-    results: StudentGroup[];
+    groups: StudentGroup[];
 }
 
 const uniLogger = {
@@ -65,10 +62,10 @@ class UniversityService {
 
             uniLogger.debug("Raw groups response:", resp.data);
 
-            if (!resp.data || !Array.isArray(resp.data.results)) {
+            if (!resp.data || !Array.isArray(resp.data.groups)) {
                 uniLogger.error("Groups response is invalid!", resp.data);
             } else {
-                uniLogger.info(`Groups loaded: ${resp.data.results.length}`);
+                uniLogger.info(`Groups loaded: ${resp.data.groups.length}`);
             }
 
             return resp.data;

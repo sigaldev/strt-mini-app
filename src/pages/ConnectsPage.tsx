@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 import ConnectService from "../components/api/service/ConnectService.ts";
+import type { Connect } from "../components/api/service/ConnectService.ts";
 
 interface ConnectUser {
     id: number;
@@ -37,7 +38,7 @@ const ConnectsPage = () => {
                 const response = await ConnectService.getUserConnects(finalUserId);
                 console.log("[ConnectsPage] Raw response:", response);
 
-                const mapped = response.map((c: any) => {
+                const mapped = response.map((c: Connect) => {
                     const u = c.user;
                     return {
                         id: u.id,

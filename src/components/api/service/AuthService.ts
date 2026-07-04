@@ -37,6 +37,19 @@ interface RefreshTokenResponse {
     access: string;
 }
 
+interface BackendErrorItem {
+    error?: string | string[];
+}
+
+interface BackendErrorResponse {
+    errors?: BackendErrorItem[];
+    error?: string | string[];
+    [key: string]: unknown;
+}
+
+const isBackendErrorResponse = (value: unknown): value is BackendErrorResponse =>
+    typeof value === "object" && value !== null;
+
 const authLogger = {
     info: (message: string, data?: unknown) =>
         console.log(`[AUTH-SERVICE] [INFO] ${new Date().toISOString()}: ${message}`, data || ''),
@@ -168,18 +181,19 @@ class AuthService {
 
             return step3Response.data.user;
         } catch (error: unknown) {
-            const axiosError = error as AxiosError<any>;
+            const axiosError = error as AxiosError<unknown>;
             const backend = axiosError.response?.data;
 
             authLogger.error("Registration process failed", backend || axiosError.message);
 
             let messages: string[] = [];
+            const backendData = isBackendErrorResponse(backend) ? backend : undefined;
 
             // ==============================
             //  1) errors: [{ error: ["..."] }]
             // ==============================
-            if (backend?.errors && Array.isArray(backend.errors)) {
-                messages = backend.errors.flatMap((item: any) => {
+            if (backendData?.errors && Array.isArray(backendData.errors)) {
+                messages = backendData.errors.flatMap((item) => {
                     if (Array.isArray(item.error)) return item.error;
                     if (typeof item.error === "string") return [item.error];
                     return [];
@@ -189,24 +203,24 @@ class AuthService {
             // ==============================
             // 2) error: ["..."]
             // ==============================
-            if (messages.length === 0 && Array.isArray(backend?.error)) {
-                messages = backend.error;
+            if (messages.length === 0 && Array.isArray(backendData?.error)) {
+                messages = backendData.error;
             }
 
             // ==============================
             // 3) error: "..."
             // ==============================
-            if (messages.length === 0 && typeof backend?.error === "string") {
-                messages = [backend.error];
+            if (messages.length === 0 && typeof backendData?.error === "string") {
+                messages = [backendData.error];
             }
 
             // ==============================
             // 4) ловим все строки внутри backend (универсальный fallback)
             // ==============================
-            if (messages.length === 0 && backend && typeof backend === "object") {
-                const collected = Object.values(backend)
+            if (messages.length === 0 && backendData) {
+                const collected = Object.values(backendData)
                     .flat()
-                    .filter((x: any) => typeof x === "string");
+                    .filter((x): x is string => typeof x === "string");
 
                 if (collected.length > 0) {
                     messages = collected;

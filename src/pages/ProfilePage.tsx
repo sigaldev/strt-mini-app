@@ -11,13 +11,14 @@ import ScholarshipBanner from "../components/profile/banner/ScholarshipBanner.ts
 import ForumsBanner from "../components/profile/banner/ForumsBanner.tsx";
 import { ProfileService, type Profile } from "../components/api/service/ProfileService.ts";
 import ConnectService from "../components/api/service/ConnectService";
+import type { ConnectRequest } from "../components/api/service/ConnectService";
 import Loader from "../components/Loader.tsx";
 
 const ProfilePage = () => {
     const [showNotifications, setShowNotifications] = useState(false);
     const [showBurgerMenu, setShowBurgerMenu] = useState(false);
     const [profileData, setProfileData] = useState<Profile | null>(null);
-    const [requests, setRequests] = useState<any[]>([]);
+    const [requests, setRequests] = useState<ConnectRequest[]>([]);
     const [loading, setLoading] = useState(true);
 
     const banners = [

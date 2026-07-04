@@ -1,5 +1,5 @@
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination } from "swiper/modules";
+import { Pagination } from "swiper/modules";
 import 'swiper/css';
 import 'swiper/css/pagination';
 import type {JSX} from "react";
@@ -12,7 +12,6 @@ const BannersSlider = ({ banners }: BannersSliderProps) => {
     return (
         <div className="mb-6">
             <Swiper
-                // modules={[Autoplay, Pagination]}
                 modules={[Pagination]}
                 autoplay={{ delay: 2000, disableOnInteraction: false }}
                 loop={true}

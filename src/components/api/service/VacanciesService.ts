@@ -32,6 +32,7 @@ export interface VacanciesFilters {
     search?: string;
     page?: number;
     per_page?: number;
+    [key: string]: string | number | undefined;
 }
 
 export interface VacanciesResponse {
@@ -42,6 +43,7 @@ export interface VacanciesResponse {
 }
 
 export interface VacancyFilter {
+    type: string;
     title: string;
     values: { id: number; value: string }[];
 }
@@ -56,7 +58,7 @@ class VacanciesServiceClass {
             console.log("🟢 [VACANCIES SERVICE] getVacancies called with filters:", filters);
 
             // Убираем пустые параметры
-            const cleanFilters: Record<string, any> = {};
+            const cleanFilters: Record<string, string | number> = {};
             Object.entries(filters).forEach(([key, value]) => {
                 if (value !== undefined && value !== null && value !== '') {
                     cleanFilters[key] = value;

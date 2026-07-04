@@ -1,16 +1,17 @@
 import { useNavigate, useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
-import { ArrowLeft, MapPin, Clock, Percent } from "lucide-react"
+import { ArrowLeft, MapPin, Percent } from "lucide-react"
 import { Button } from "@maxhub/max-ui"
 import DiscountService from "../components/api/service/DiscountService"
 import Loader from "../components/Loader.tsx";
+import type { PartnerOffer } from "../components/discounts/types.ts";
 
 const DiscountDetailPage = () => {
     const { id } = useParams()
     const navigate = useNavigate()
 
     const [loading, setLoading] = useState(true)
-    const [discount, setDiscount] = useState<any>(null)
+    const [discount, setDiscount] = useState<PartnerOffer | null>(null)
 
     useEffect(() => {
         const fetchDiscount = async () => {
@@ -25,7 +26,7 @@ const DiscountDetailPage = () => {
             try {
                 const data = await DiscountService.getPartnerById(Number(id))
                 console.log("DiscountDetailPage: discount data fetched:", data)
-                setDiscount(data.partner)
+                setDiscount(data)
             } catch (err) {
                 console.error("DiscountDetailPage: error loading discount:", err)
             } finally {
@@ -95,7 +96,7 @@ const DiscountDetailPage = () => {
                         </h3>
 
                         <div className="space-y-2">
-                            {(discount.addresses || []).map((location: string, index: number) => (
+                            {(discount.addresses || []).map((location, index) => (
                                 <div key={index} className="p-3 bg-gray-200 rounded-lg text-gray-900">
                                     {location}
                                 </div>

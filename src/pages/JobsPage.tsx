@@ -78,7 +78,7 @@ const JobsPage = () => {
                 const params: VacanciesFilters = { page, per_page: PER_PAGE };
 
                 Object.entries(activeFilters).forEach(([key, value]) => {
-                    if (value != null) (params as any)[key] = value;
+                    if (value != null) params[key] = value;
                 });
 
                 console.log("📦 Params for API request:", params);

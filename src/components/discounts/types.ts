@@ -8,6 +8,22 @@ export interface Address {
     address: string;
 }
 
+export interface ImageVariant {
+    url?: string | null;
+}
+
+export interface PhotoSet {
+    large?: ImageVariant;
+    medium?: ImageVariant;
+    thumb?: ImageVariant;
+}
+
+export interface ActivationType {
+    type: "offline" | "online" | "promo_code" | string;
+    promo_code?: string | null;
+    link?: string | null;
+}
+
 export interface CashbackOffer {
     id: number | string;
     name: string;
@@ -24,11 +40,16 @@ export interface PartnerOffer {
     partner_description?: string;
     logo?: string;
     city?: City | null;
-    discount?: string;
+    discount?: string | number;
     site_link?: string;
-    addresses?: Address[];
+    addresses?: string[];
     tag?: string;
     type?: string;
+    activation_type?: ActivationType | null;
+    logo_url?: PhotoSet | null;
+    popup?: {
+        description?: string;
+    } | null;
 }
 
 export type Offer = CashbackOffer | PartnerOffer;

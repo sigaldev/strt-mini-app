@@ -1,11 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import icoMero from "../assets/mero/ico-1.svg";
-import meroBg from "../assets/mero/meroBg.png";
-import { Button, Spinner } from "@maxhub/max-ui";
+import { Button } from "@maxhub/max-ui";
 import EventService from "../components/api/service/EventService.ts";
 import type { Event, EventType } from "../components/api/service/EventService.ts";
-import Loader from "../components/Loader.tsx";
 
 const EventsPage = () => {
     const navigate = useNavigate();
@@ -73,7 +70,7 @@ const EventsPage = () => {
     useEffect(() => {
         const fetchEvent = async () => {
             const recommended = await EventService.getEventById(915);
-            setRecommendedEvent(recommended.event);
+            setRecommendedEvent(recommended);
         }
         fetchEvent();
     }, []);

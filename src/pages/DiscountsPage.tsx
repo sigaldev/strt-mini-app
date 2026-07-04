@@ -8,6 +8,14 @@ import EmptyState from "../components/discounts/EmptyState";
 import type { CashbackOffer, PartnerOffer, TabType } from "../components/discounts/types";
 import DiscountService from "../components/api/service/DiscountService.ts";
 
+const weeklyHighlight: CashbackOffer = {
+    id: "weekly",
+    name: "Кофе Хауз",
+    type: "Кофейня",
+    logo: "☕",
+    cashback: "20%",
+};
+
 const DiscountsPage = () => {
     const navigate = useNavigate();
 
@@ -16,14 +24,6 @@ const DiscountsPage = () => {
     const [cashbackOffers, setCashbackOffers] = useState<CashbackOffer[]>([]);
     const [partnerOffers, setPartnerOffers] = useState<PartnerOffer[]>([]);
     const [loading, setLoading] = useState(false);
-
-    const weeklyHighlight: CashbackOffer = {
-        id: "weekly",
-        name: "Кофе Хауз",
-        type: "Кофейня",
-        logo: "☕",
-        cashback: "20%",
-    };
 
     useEffect(() => {
         const fetchOffers = async () => {
