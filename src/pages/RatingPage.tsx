@@ -29,9 +29,7 @@ const RatingPage = () => {
     const fetchUsers = useCallback(async (newPage = 1) => {
         try {
             setLoading(true);
-            console.log(`RatingPage: fetching users page ${newPage}...`);
             const response = await RatingService.getUsers(newPage, USERS_PER_PAGE, searchQuery);
-            console.log("RatingPage: users fetched:", response);
 
             const studentsData: Student[] = response.users.map((u: User) => ({
                 id: u.id,
@@ -47,8 +45,8 @@ const RatingPage = () => {
             setStudents(prev => (newPage === 1 ? studentsData : [...prev, ...studentsData]));
             setHasMore(response.users.length === USERS_PER_PAGE); // если меньше USERS_PER_PAGE — значит больше нет
             setPage(newPage);
-        } catch (err) {
-            console.error("RatingPage: error fetching users", err);
+        } catch {
+            setHasMore(false);
         } finally {
             setLoading(false);
         }

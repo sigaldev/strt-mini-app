@@ -20,6 +20,7 @@ const ProfilePage = () => {
     const [profileData, setProfileData] = useState<Profile | null>(null);
     const [requests, setRequests] = useState<ConnectRequest[]>([]);
     const [loading, setLoading] = useState(true);
+    const [profileError, setProfileError] = useState("");
 
     const banners = [
         <DiscountsBanner key="career" />,
@@ -33,7 +34,6 @@ const ProfilePage = () => {
     };
 
     useEffect(() => {
-        console.log("Show Notifications:", showNotifications, "Show Burger Menu:", showBurgerMenu);
         document.body.style.overflow = showNotifications || showBurgerMenu ? 'hidden' : 'unset';
         return () => { document.body.style.overflow = 'unset'; };
     }, [showNotifications, showBurgerMenu]);
@@ -62,16 +62,13 @@ const ProfilePage = () => {
 
     useEffect(() => {
         const fetchProfile = async () => {
-            console.log("Fetching profile...");
             try {
                 const profile = await ProfileService.getProfile();
-                console.log("Profile fetched:", profile);
                 setProfileData(profile);
-            } catch (error) {
-                console.error("Failed to load profile:", error);
+            } catch {
+                setProfileError("Не удалось загрузить профиль");
             } finally {
                 setLoading(false);
-                console.log("Profile loading finished");
             }
         };
         fetchProfile();
@@ -80,20 +77,26 @@ const ProfilePage = () => {
     // Загрузка connect-запросов
     useEffect(() => {
         const fetchRequests = async () => {
-            console.log("Fetching connect requests...");
             try {
                 const data = await ConnectService.getConnectRequests();
-                console.log("Connect requests fetched:", data);
                 setRequests(data);
-            } catch (err) {
-                console.error("Failed to load connect requests:", err);
+            } catch {
+                setRequests([]);
             }
         };
 
         fetchRequests();
     }, []);
 
-    if (loading || !profileData) return <Loader />;
+    if (loading) return <Loader />;
+
+    if (!profileData) {
+        return (
+            <div className="min-h-screen bg-gray-50 px-4 py-12 text-center text-sm text-red-600">
+                {profileError || "Профиль не найден"}
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gray-50 py-4 px-1 xs:p-4 md:p-6 overflow-hidden">

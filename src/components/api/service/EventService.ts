@@ -87,13 +87,11 @@ class EventService {
         const resp = await api.get<EventsResponse>("/api/v1/events/", {
             params: { page, per_page, event_type },
         });
-        console.log("EventService.getEvents response:", resp);
         return resp.data;
     }
 
     static async getEventById(id: number): Promise<Event> {
         const resp = await api.get<EventDetailResponse>(`/api/v1/events/${id}`);
-        console.log("EventService.getEventById response:", resp.data.event);
         return resp.data.event;
     }
 }

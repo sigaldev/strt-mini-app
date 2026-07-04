@@ -71,28 +71,13 @@ class RatingService {
         if (universityIds) params.university_id = universityIds.join(",");
         if (cityIds) params.city_id = cityIds.join(",");
 
-        console.log("[RatingService] GET /api/v2/users/ params:", params);
-
-        try {
-            const resp = await api.get<UsersResponse>("/api/v2/users/", { params });
-            console.log("[RatingService] Response data:", resp.data);
-            return resp.data;
-        } catch (err) {
-            console.error("[RatingService] Error fetching users:", err);
-            throw err;
-        }
+        const resp = await api.get<UsersResponse>("/api/v2/users/", { params });
+        return resp.data;
     }
 
     static async getUserById(id: number): Promise<{ user: User }> {
-        console.log(`[RatingService] Fetching user with ID: ${id}`);
-        try {
-            const resp = await api.get(`/api/v1/user/${id}/`);
-            console.log(`[RatingService] User data received:`, resp.data);
-            return resp.data;
-        } catch (err) {
-            console.error(`[RatingService] Error fetching user ${id}:`, err);
-            throw err;
-        }
+        const resp = await api.get(`/api/v1/user/${id}/`);
+        return resp.data;
     }
 
 }
