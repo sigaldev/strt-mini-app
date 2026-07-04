@@ -12,6 +12,7 @@ const ScholarshipPage = () => {
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
     const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
     const toggleExpand = (index: number) => setExpandedIndex(prev => prev === index ? null : index);
 
@@ -36,14 +37,15 @@ const ScholarshipPage = () => {
     useEffect(() => {
         const fetchScholarships = async () => {
             setLoading(true);
+            setError("");
             try {
                 const res = await ScholarshipService.getScholarships(page, PER_PAGE);
                 const list = res.scholarship ?? [];
                 setScholarships(prev => page === 1 ? list : [...prev, ...list]);
                 setHasMore(list.length === PER_PAGE);
-            } catch (err) {
-                console.error("Ошибка загрузки стипендий:", err);
-                setScholarships([]);
+            } catch {
+                setError("Не удалось загрузить стипендии");
+                if (page === 1) setScholarships([]);
                 setHasMore(false);
             } finally {
                 setLoading(false);
@@ -62,7 +64,13 @@ const ScholarshipPage = () => {
                     </h1>
                 </header>
 
-                {scholarships.length === 0 && !loading ? (
+                {error && !loading ? (
+                    <div className="rounded-[20px] border border-dashed border-red-200 bg-white
+                        px-6 py-12 text-center text-sm text-red-600">
+                        <Briefcase className="mx-auto mb-4 h-12 w-12 text-red-300" />
+                        {error}
+                    </div>
+                ) : scholarships.length === 0 && !loading ? (
                     <div className="rounded-[20px] border border-dashed border-[#D8DAE8] bg-white
                         px-6 py-12 text-center text-sm text-[#6F6F7B]">
                         <Briefcase className="mx-auto mb-4 h-12 w-12 text-[#C4C6D6]" />

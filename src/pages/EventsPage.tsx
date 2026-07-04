@@ -30,6 +30,9 @@ const EventsPage = () => {
             const newEvents = data?.events || [];
 
             setEvents((prev) => [...prev, ...newEvents]);
+            if (pageNum === 1) {
+                setRecommendedEvent(data?.highlighted_events?.[0] || null);
+            }
             setHasMore(newEvents.length > 0);
         } catch (err) {
             console.error("Ошибка при загрузке мероприятий", err);
@@ -66,14 +69,6 @@ const EventsPage = () => {
         if (page === 1) return;
         fetchEvents(page);
     }, [page, fetchEvents]);
-
-    useEffect(() => {
-        const fetchEvent = async () => {
-            const recommended = await EventService.getEventById(915);
-            setRecommendedEvent(recommended);
-        }
-        fetchEvent();
-    }, []);
 
     const tabs: { id: EventType; label: string }[] = [
         { id: "event", label: "Мероприятия" },
