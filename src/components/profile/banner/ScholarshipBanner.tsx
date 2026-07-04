@@ -1,5 +1,5 @@
 import {ChevronRight} from "lucide-react";
-import rightImg from "../../../assets/profileBanner/banner-3.svg";
+import rightImg from "../../../assets/profileBanner/banner-3.png";
 import decor from "../../../assets/profileBanner/decor2.svg";
 import star from "../../../assets/star.svg";
 import {useNavigate} from "react-router-dom";
@@ -23,8 +23,8 @@ const ScholarshipBanner = () => {
                 <p className="text-[12px] xs:text-[14px]">Твоя финансовая поддержка <br/> во время учёбы </p>
             </div>
 
-            <div className="z-10 absolute right-[0] top-1/2 -translate-y-2/3 scale-125">
-                <img src={rightImg} alt="" />
+            <div className="z-10 absolute right-[-12px] top-1/2 -translate-y-2/3 w-52 xs:w-60">
+                <img src={rightImg} alt="" className="w-full" />
             </div>
 
             {/* Декор справа */}
