@@ -46,7 +46,7 @@ const RegisterPage: React.FC = () => {
     // Если есть refresh token — редирект
     useEffect(() => {
         if (hasRefreshToken()) navigate("/profile");
-    }, []);
+    }, [navigate]);
 
     // Загружаем группы по запросу (2+ символа)
     useEffect(() => {
@@ -65,7 +65,7 @@ const RegisterPage: React.FC = () => {
                     if (groupQuery.trim() === "") {
                         setGroups(allGroups);
                     } else {
-                        const filtered = allGroups.filter(g =>
+                        const filtered = allGroups.filter((g: StudentGroup) =>
                             g.name.toLowerCase().includes(groupQuery.toLowerCase())
                         );
                         setGroups(filtered);
@@ -143,8 +143,8 @@ const RegisterPage: React.FC = () => {
                 formData.avatar || undefined
             );
             navigate("/profile");
-        } catch (err: any) {
-            const message = err?.message || "Неизвестная ошибка";
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : "Неизвестная ошибка";
             setErrors([message]);
         } finally {
             setLoading(false);

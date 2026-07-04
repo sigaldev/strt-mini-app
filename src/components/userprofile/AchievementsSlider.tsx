@@ -1,7 +1,6 @@
 import {Counter} from "@maxhub/max-ui";
 import {Swiper, SwiperSlide} from "swiper/react";
 import notAchiveImg from "../../assets/achivments/notAchiveImg.svg";
-import rocket from "../../assets/achivments/rocket.svg";
 
 interface AchievementLogo {
     medium?: string;
@@ -67,7 +66,7 @@ const AchievementsSlider = ({ achievements }: AchievementsSliderProps) => {
                     </div>
 
                     <img
-                        src={rocket}
+                        src={notAchiveImg}
                         alt="Нет достижений"
                         className="
                             absolute

@@ -1,9 +1,10 @@
 import { Bell, Menu } from 'lucide-react'
+import type { ConnectRequest } from "../api/service/ConnectService.ts";
 
 interface HeaderProps {
     setShowNotifications: React.Dispatch<React.SetStateAction<boolean>>
     setShowBurgerMenu: React.Dispatch<React.SetStateAction<boolean>>
-    requests?: any[]
+    requests?: ConnectRequest[]
 }
 
 const Header = ({ setShowNotifications, setShowBurgerMenu, requests = [] }: HeaderProps) => {

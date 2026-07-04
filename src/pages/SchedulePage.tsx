@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { Clock, MapPin, User as UserIcon, ChevronLeft, ChevronRight } from 'lucide-react';
 import { type DaySchedule, type ScheduleLesson, ScheduleService } from "../components/api/service/ScheduleService.ts";
 import { ProfileService } from "../components/api/service/ProfileService.ts";
@@ -54,18 +54,21 @@ const SchedulePage = () => {
     const [noGroup, setNoGroup] = useState(false);
     const [groupName, setGroupName] = useState<string>("");
 
-    const mapScheduleLesson = (lesson: ScheduleLesson): Lesson => ({
+    const mapScheduleLesson = useCallback((lesson: ScheduleLesson): Lesson => ({
         id: `${lesson.subject?.id ?? "lesson"}-${lesson.start_time}-${lesson.end_time}-${lesson.room || "room"}`,
         subject: lesson.subject?.name || "Без названия",
         time: `${lesson.start_time} - ${lesson.end_time}`,
         room: lesson.room?.trim() ? lesson.room : "Аудитория уточняется",
         teacher: lesson.teacher?.name || "Преподаватель не указан",
         type: mapSubjectTypeToLessonType(lesson.subject?.type),
-    });
+    }), []);
 
     const getWeekdayIndex = (dateString: string) => normalizeDayIndex(new Date(dateString));
 
-    const mapDaySchedule = (day: DaySchedule): Lesson[] => day.schedule.map(mapScheduleLesson);
+    const mapDaySchedule = useCallback(
+        (day: DaySchedule): Lesson[] => day.schedule.map(mapScheduleLesson),
+        [mapScheduleLesson]
+    );
 
     useEffect(() => {
         const fetchSchedule = async () => {
@@ -93,8 +96,8 @@ const SchedulePage = () => {
                 });
 
                 setSchedule(newSchedule);
-            } catch (error) {
-                if (error.message === "NO_GROUP_ID") {
+            } catch (error: unknown) {
+                if (error instanceof Error && error.message === "NO_GROUP_ID") {
                     setNoGroup(true);
                     setLoading(false);
                     return;
@@ -106,7 +109,7 @@ const SchedulePage = () => {
         };
 
         fetchSchedule();
-    }, [currentWeek]);
+    }, [currentWeek, mapDaySchedule]);
 
     useEffect(() => {
         const fetchGroupName = async () => {

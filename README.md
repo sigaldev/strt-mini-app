@@ -35,6 +35,24 @@ The development server runs via Vite on port **5173**.
 
 ---
 
+## Environment Variables
+
+Create a local `.env` file from the example:
+
+```bash
+cp .env.example .env
+```
+
+Required variables:
+
+```env
+VITE_API_BASE_URL=https://api.example.com
+```
+
+`VITE_API_BASE_URL` is used by the axios client as the backend API base URL.
+
+---
+
 ## How to Run the Project
 
 ### 1. Clone the repository

@@ -3,18 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { Button, Input } from "@maxhub/max-ui";
 import AuthService, {hasRefreshToken} from "../components/api/service/AuthService";
 
-type Logger = {
-    info: (message: string, data?: unknown) => void;
-    error: (message: string, data?: unknown) => void;
-    warn: (message: string, data?: unknown) => void;
-    debug: (message: string, data?: unknown) => void;
-};
+const getLoginErrorMessage = (err: unknown) => {
+    if (typeof err === "object" && err !== null && "response" in err) {
+        const data = (err as { response?: { data?: { errors?: { error?: string[] }[] } } }).response?.data;
+        return data?.errors?.[0]?.error?.[0] || "Произошла ошибка при входе";
+    }
 
-const logger: Logger = {
-    info: (message, data) => console.log(`[INFO] ${new Date().toISOString()}: ${message}`, data || ''),
-    error: (message, data) => console.error(`[ERROR] ${new Date().toISOString()}: ${message}`, data || ''),
-    warn: (message, data) => console.warn(`[WARN] ${new Date().toISOString()}: ${message}`, data || ''),
-    debug: (message, data) => console.debug(`[DEBUG] ${new Date().toISOString()}: ${message}`, data || '')
+    return "Произошла ошибка при входе";
 };
 
 interface LoginForm {
@@ -32,12 +27,11 @@ const LoginPage: React.FC = () => {
         if (hasRefreshToken()) {
             navigate("/profile");
         }
-    }, []);
+    }, [navigate]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
-        logger.debug("Input changed", { field: name, value: name === "password" ? "***" : value });
     };
 
     const handleLogin = async (e: React.FormEvent) => {
@@ -45,28 +39,15 @@ const LoginPage: React.FC = () => {
         setError("");
         setLoading(true);
 
-        logger.info("Login form submitted", { phone_number: formData.phone_number });
-
         try {
-            const response = await AuthService.login(formData.phone_number, formData.password);
-
-            logger.info("Login successful", { phone_number: formData.phone_number, hasAccessToken: !!response.access });
-
+            await AuthService.login(formData.phone_number, formData.password);
             navigate("/profile");
         } catch (err: unknown) {
-            logger.error("Login failed", err);
-
-            const message =
-                typeof err === "object" && err !== null && "response" in err
-                    ? (err as any).response?.data?.errors?.[0]?.error?.[0] || "Произошла ошибка при входе"
-                    : "Произошла ошибка при входе";
+            const message = getLoginErrorMessage(err);
 
             setError(message);
-
-            logger.warn("Displayed login error", { message });
         } finally {
             setLoading(false);
-            logger.debug("Login process finished, loading state reset");
         }
     };
 
@@ -120,7 +101,6 @@ const LoginPage: React.FC = () => {
                         mode="link"
                         size="medium"
                         onClick={() => {
-                            logger.info("Navigation to register page via link");
                             navigate("/register");
                         }}
                     >

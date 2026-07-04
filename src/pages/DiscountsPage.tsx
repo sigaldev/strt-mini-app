@@ -16,30 +16,14 @@ const DiscountsPage = () => {
     const [cashbackOffers, setCashbackOffers] = useState<CashbackOffer[]>([]);
     const [partnerOffers, setPartnerOffers] = useState<PartnerOffer[]>([]);
     const [loading, setLoading] = useState(false);
-
-    const weeklyHighlight: CashbackOffer = {
-        id: "weekly",
-        name: "Кофе Хауз",
-        type: "Кофейня",
-        logo: "☕",
-        cashback: "20%",
-    };
+    const [error, setError] = useState("");
 
     useEffect(() => {
         const fetchOffers = async () => {
             setLoading(true);
+            setError("");
             try {
-                const partners = await DiscountService.getPartners(1);
-                console.log("DiscountService.getPartners response:", partners);
-
-                if (!partners) {
-                    console.warn("Партнеры не пришли или undefined");
-                    setCashbackOffers([weeklyHighlight]);
-                    setPartnerOffers([]);
-                    return;
-                }
-
-                console.log(partners[0])
+                const partners = await DiscountService.getPartners();
 
                 // кешбеки: offline
                 const cashbackData: CashbackOffer[] = partners
@@ -68,14 +52,11 @@ const DiscountsPage = () => {
                         addresses: p.addresses,
                     }));
 
-                console.log("Cashback offers:", cashbackData);
-                console.log("Partner offers:", partnerData);
-
                 setCashbackOffers([...cashbackData]);
                 setPartnerOffers(partnerData);
-            } catch (error) {
-                console.error("Ошибка при загрузке партнеров:", error);
-                setCashbackOffers([weeklyHighlight]);
+            } catch {
+                setError("Не удалось загрузить скидки");
+                setCashbackOffers([]);
                 setPartnerOffers([]);
             } finally {
                 setLoading(false);
@@ -113,6 +94,8 @@ const DiscountsPage = () => {
 
             {loading ? (
                 <div className="text-center py-12 text-gray-500">Загрузка...</div>
+            ) : error ? (
+                <div className="text-center py-12 text-red-600">{error}</div>
             ) : (
                 <>
                     {offers.length > 0 ? (

@@ -1,67 +1,37 @@
 import api from "../api";
 import type { PartnerOffer } from "../../discounts/types.ts";
 
-const discountLogger = {
-    info: (message: string, data?: any) =>
-        console.log(`[DISCOUNT-SERVICE] [INFO] ${new Date().toISOString()}: ${message}`, data || ''),
-    error: (message: string, error?: any) =>
-        console.error(`[DISCOUNT-SERVICE] [ERROR] ${new Date().toISOString()}: ${message}`, error || ''),
-};
+interface PartnersResponse {
+    partners?: PartnerOffer[];
+    results?: PartnerOffer[];
+}
 
 class DiscountService {
     async getPartners(cityId?: number): Promise<PartnerOffer[]> {
-        discountLogger.info("Fetching partners started", { cityId });
+        const response = await api.get("/api/v1/partners/", {
+            params: cityId ? { city_id: cityId } : undefined,
+        });
 
-        try {
-            // Используем cityId только если он есть
-            const url = cityId ? `/api/v1/partners/?city_id=${cityId}` : `/api/v1/partners/`;
-            discountLogger.info("Request URL", url);
+        let data: PartnerOffer[] = [];
+        const responseData = response.data as PartnersResponse | PartnerOffer[];
 
-            const response = await api.get(url);
-
-            discountLogger.info("Raw response", response);
-
-            // Проверяем возможные варианты структуры данных
-            let data: any[] = [];
-
-            if (Array.isArray(response.data)) {
-                data = response.data;
-            } else if (Array.isArray(response.data.results)) {
-                data = response.data.results;
-            } else if (Array.isArray(response.data.partners)) {
-                data = response.data.partners;
-            } else {
-                discountLogger.info("Unexpected response structure", response.data);
-            }
-
-
-            discountLogger.info("Data array length", data.length);
-
-            const partners = data.map((partner: any): PartnerOffer => ({
-                ...partner, // возвращаем все данные как есть
-                discount: partner.discount ? partner.discount.toString() : undefined
-            }));
-
-
-            discountLogger.info("Final partners array", partners);
-
-            return partners;
-        } catch (error: any) {
-            discountLogger.error("Failed to fetch partners", error?.response?.data || error);
-            return [];
+        if (Array.isArray(responseData)) {
+            data = responseData;
+        } else if (Array.isArray(responseData.results)) {
+            data = responseData.results;
+        } else if (Array.isArray(responseData.partners)) {
+            data = responseData.partners;
         }
+
+        return data.map((partner): PartnerOffer => ({
+            ...partner,
+            discount: partner.discount ? partner.discount.toString() : undefined
+        }));
     }
 
-    async getPartnerById(id: number) {
-        discountLogger.info(`Fetching partner with ID: ${id}`);
-        try {
-            const response = await api.get(`/api/v1/partners/${id}`);
-            discountLogger.info(`Partner data received:`, response.data);
-            return response.data;
-        } catch (error: any) {
-            discountLogger.error(`Error fetching partner ${id}:`, error?.response?.data || error);
-            throw error;
-        }
+    async getPartnerById(id: number): Promise<PartnerOffer> {
+        const response = await api.get(`/api/v1/partners/${id}`);
+        return response.data;
     }
 
 }

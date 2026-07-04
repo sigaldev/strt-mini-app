@@ -4,19 +4,20 @@ import { routesConfig } from "./routesConfig.tsx";
 import Layout from "../components/Layout.tsx";
 import ScrollToTop from "../components/ScrollToTop.tsx";
 import {setupInterceptors} from "../components/api/setupInterceptors.ts";
+import RequireAuth from "../components/RequireAuth.tsx";
 
 const InnerAppRouter = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        setupInterceptors(navigate);
+        return setupInterceptors(navigate);
     }, [navigate]);
 
     const renderRoutes = (config: typeof routesConfig) =>
         config.map((route, idx) => {
             if (route.layout && route.children) {
                 return (
-                    <Route path={route.path} element={<Layout />} key={idx}>
+                    <Route path={route.path} element={<RequireAuth><Layout /></RequireAuth>} key={idx}>
                         {route.children.map((child, childIdx) => (
                             <Route
                                 key={childIdx}

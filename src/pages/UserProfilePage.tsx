@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom"
 import { ChevronLeft, UserPlus, UserCheck } from "lucide-react"
 import Loader from "../components/Loader"
 import RatingService from "../components/api/service/RatingService.ts"
+import type { User } from "../components/api/service/RatingService.ts"
 import AchievementsSlider from "../components/userprofile/AchievementsSlider.tsx"
 import ConnectService from "../components/api/service/ConnectService.ts";
 
@@ -11,7 +12,7 @@ const UserProfilePage = () => {
     const navigate = useNavigate()
 
     const [loading, setLoading] = useState(true)
-    const [user, setUser] = useState<any>(null)
+    const [user, setUser] = useState<User | null>(null)
     const [requestSent, setRequestSent] = useState(false)
 
     useEffect(() => {
@@ -65,7 +66,7 @@ const UserProfilePage = () => {
                     <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center text-white text-2xl font-bold">
                         {user.avatar ? (
                             <img
-                                src={user.avatar.medium?.url || user.avatar.large?.url || user.avatar.thumb?.url}
+                                src={user.avatar.medium?.url || user.avatar.large?.url || user.avatar.thumb?.url || undefined}
                                 alt={`${user.full_name} avatar`}
                                 className="w-full h-full object-cover"
                             />
@@ -104,10 +105,12 @@ const UserProfilePage = () => {
                 ) : (
                     <button
                         onClick={async () => {
+                            if (!id) return;
                             try {
                                 await ConnectService.sendConnectRequest(id);
                                 setRequestSent(true);
                             } catch (err) {
+                                console.error("UserProfilePage: connect request failed:", err);
                                 alert("Не удалось отправить запрос");
                             }
                         }}
@@ -152,7 +155,7 @@ const UserProfilePage = () => {
 
 
             {/* Achievements */}
-            <AchievementsSlider achievements={user.achievements} />
+            <AchievementsSlider achievements={user.achievements || []} />
         </div>
     )
 }

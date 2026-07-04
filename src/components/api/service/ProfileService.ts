@@ -12,10 +12,14 @@ interface Group {
     name: string;
 }
 
+interface ImageVariant {
+    url: string | null;
+}
+
 interface Avatar {
-    large: string;
-    medium: string;
-    thumb: string;
+    large?: ImageVariant;
+    medium?: ImageVariant;
+    thumb?: ImageVariant;
 }
 
 interface LevelBonusPartner {
@@ -70,14 +74,8 @@ interface Profile {
 
 class ProfileServiceClass {
     async getProfile(): Promise<Profile> {
-        try {
-            const response = await api.get("/api/v1/my/profile/");
-            console.log("[PROFILE SERVICE] Profile fetched successfully:", response.data);
-            return response.data.user;
-        } catch (error) {
-            console.error("[PROFILE SERVICE] Failed to load profile:", error);
-            throw error;
-        }
+        const response = await api.get("/api/v1/my/profile/");
+        return response.data.user;
     }
 }
 

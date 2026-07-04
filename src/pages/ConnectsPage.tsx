@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 import ConnectService from "../components/api/service/ConnectService.ts";
+import type { Connect } from "../components/api/service/ConnectService.ts";
 
 interface ConnectUser {
     id: number;
@@ -22,22 +23,22 @@ const ConnectsPage = () => {
 
     const [connects, setConnects] = useState<ConnectUser[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
     useEffect(() => {
         const fetchConnects = async () => {
             if (!finalUserId) {
-                console.warn("[ConnectsPage] No user ID provided in params");
+                setError("Не удалось определить пользователя");
                 setLoading(false);
                 return;
             }
 
-            console.log("[ConnectsPage] Fetching connects...");
             setLoading(true);
+            setError("");
             try {
                 const response = await ConnectService.getUserConnects(finalUserId);
-                console.log("[ConnectsPage] Raw response:", response);
 
-                const mapped = response.map((c: any) => {
+                const mapped = response.map((c: Connect) => {
                     const u = c.user;
                     return {
                         id: u.id,
@@ -54,13 +55,12 @@ const ConnectsPage = () => {
                     };
                 });
 
-                console.log("[ConnectsPage] Mapped connects:", mapped);
                 setConnects(mapped);
-            } catch (e) {
-                console.error("[ConnectsPage] Failed to load connects:", e);
+            } catch {
+                setError("Не удалось загрузить коннекты");
+                setConnects([]);
             } finally {
                 setLoading(false);
-                console.log("[ConnectsPage] Loading finished");
             }
         };
 
@@ -98,16 +98,15 @@ const ConnectsPage = () => {
             <div className="p-4 space-y-3">
                 {loading ? (
                     <div className="text-center py-12 text-gray-500">Загрузка...</div>
+                ) : error ? (
+                    <div className="text-center py-12 text-red-600">{error}</div>
                 ) : connects.length === 0 ? (
                     <div className="text-center py-12 text-gray-500">Пока нет коннектов</div>
                 ) : (
                     connects.map((u) => (
                         <div
                             key={u.id}
-                            onClick={() => {
-                                console.log(`[ConnectsPage] Navigating to user ID: ${u.id}`);
-                                navigate(`/user/${u.id}`);
-                            }}
+                            onClick={() => navigate(`/user/${u.id}`)}
                             className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition cursor-pointer flex items-center gap-4"
                         >
                             <div className="w-14 h-14 rounded-full overflow-hidden flex items-center justify-center text-white text-lg font-semibold">

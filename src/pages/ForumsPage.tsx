@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@maxhub/max-ui";
 import EventService from "../components/api/service/EventService.ts";
 import type { Event } from "../components/api/service/EventService.ts";
 import Loader from "../components/Loader.tsx";
@@ -8,7 +7,7 @@ import Loader from "../components/Loader.tsx";
 const ForumsPage = () => {
     const navigate = useNavigate();
     const [events, setEvents] = useState<Event[]>([]);
-    const [recommendedEvent, setRecommendedEvent] = useState<Event | null>(null);
+    const [recommendedEvent] = useState<Event | null>(null);
     const [loading, setLoading] = useState(true);
     const [showRarityInfo, setShowRarityInfo] = useState(false);
 
