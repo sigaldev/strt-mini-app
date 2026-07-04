@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, ChevronLeft, Trophy, TrendingUp } from "lucide-react";
-import { Button, Input } from "@maxhub/max-ui";
+import { Search, ChevronLeft } from "lucide-react";
+import { Input } from "@maxhub/max-ui";
 import RatingService, { type User } from "../components/api/service/RatingService.ts";
 
 interface Student {
@@ -19,7 +19,6 @@ const USERS_PER_PAGE = 50;
 
 const RatingPage = () => {
     const navigate = useNavigate();
-    const [activeTab, setActiveTab] = useState<"overall" | "season">("overall");
     const [searchQuery, setSearchQuery] = useState("");
     const [students, setStudents] = useState<Student[]>([]);
     const [loading, setLoading] = useState(false);
@@ -52,13 +51,13 @@ const RatingPage = () => {
         }
     }, [searchQuery]);
 
-    // Перезагрузка при изменении searchQuery или активной вкладки
+    // Перезагрузка при изменении searchQuery
     useEffect(() => {
         setStudents([]);
         setPage(1);
         setHasMore(true);
         fetchUsers(1);
-    }, [searchQuery, activeTab, fetchUsers]);
+    }, [searchQuery, fetchUsers]);
 
     // Обработчик скролла для бесконечной ленты
     useEffect(() => {
@@ -109,30 +108,6 @@ const RatingPage = () => {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
-
-                    {/* Tabs */}
-                    <div className="flex gap-2 mt-4">
-                        <Button
-                            appearance={activeTab === "overall" ? "themed" : "neutral"}
-                            mode="primary"
-                            size="medium"
-                            stretched
-                            iconBefore={<Trophy className="w-5 h-5" />}
-                            onClick={() => setActiveTab("overall")}
-                        >
-                            Общий рейтинг
-                        </Button>
-                        <Button
-                            appearance={activeTab === "season" ? "themed" : "neutral"}
-                            mode="primary"
-                            size="medium"
-                            stretched
-                            iconBefore={<TrendingUp className="w-5 h-5" />}
-                            onClick={() => setActiveTab("season")}
-                        >
-                            Рейтинг сезона
-                        </Button>
-                    </div>
                 </div>
             </div>
 
