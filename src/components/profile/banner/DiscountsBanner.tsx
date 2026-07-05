@@ -23,7 +23,7 @@ const DiscountsBanner = () => {
                 <p className="text-[12px] xs:text-[14px]">Экономь на нужном <br/> и получай больше </p>
             </div>
 
-            <div className="z-10 absolute right-[0] top-1/2 -translate-y-1/2 w-64 translate-x-12">
+            <div className="z-10 absolute right-[0] top-[40%] -translate-y-1/2 w-64 translate-x-12">
                 <img src={rightImg} alt="" />
             </div>
 

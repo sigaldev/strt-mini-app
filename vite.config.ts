@@ -7,5 +7,15 @@ export default defineConfig({
     host: true,
     port: 5173,
     allowedHosts: ['api.strt-hack.ru'],
+    fs: {
+      deny: [
+        'docker-compose.yml',
+        'Dockerfile',
+        'README.md',
+        'AGENT.md',
+        '.env',
+        '.env.*',
+      ],
+    },
   },
 })
