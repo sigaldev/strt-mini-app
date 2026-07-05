@@ -1,6 +1,6 @@
 import api from "../api";
-import Cookies from "js-cookie";
 import type { AxiosError, AxiosResponse } from "axios";
+import { tokenStorage } from "../tokenStorage";
 
 export interface LoginResponse {
     access: string;
@@ -47,12 +47,6 @@ interface BackendErrorResponse {
     [key: string]: unknown;
 }
 
-const tokenCookieOptions = {
-    path: "/",
-    sameSite: "lax" as const,
-    secure: import.meta.env.PROD,
-};
-
 const isBackendErrorResponse = (value: unknown): value is BackendErrorResponse =>
     typeof value === "object" && value !== null;
 
@@ -84,8 +78,7 @@ class AuthService {
             const response: AxiosResponse<SignInResponse> = await api.post("/api/v1/sign_in/", { phone_number: phone, password });
             const { token, refresh_token } = response.data;
 
-            Cookies.set("STRT_MAX_ACCESS_TOKEN", token, tokenCookieOptions);
-            Cookies.set("STRT_MAX_REFRESH_TOKEN", refresh_token, tokenCookieOptions);
+            tokenStorage.setTokens(token, refresh_token);
 
             authLogger.info("Login successful", {
                 hasAccessToken: !!token,
@@ -173,9 +166,8 @@ class AuthService {
             });
 
             if (step3Response.data.token && step3Response.data.refresh_token) {
-                Cookies.set("STRT_MAX_ACCESS_TOKEN", step3Response.data.token, tokenCookieOptions);
-                Cookies.set("STRT_MAX_REFRESH_TOKEN", step3Response.data.refresh_token, tokenCookieOptions);
-                authLogger.info("Tokens stored in cookies");
+                tokenStorage.setTokens(step3Response.data.token, step3Response.data.refresh_token);
+                authLogger.info("Tokens stored");
             }
 
             if (!step3Response.data.user) {
@@ -249,7 +241,7 @@ class AuthService {
 
     async refreshToken(): Promise<string> {
         authLogger.debug("Refreshing token");
-        const refresh = Cookies.get("STRT_MAX_REFRESH_TOKEN");
+        const refresh = tokenStorage.getRefreshToken();
 
         if (!refresh) {
             authLogger.error("No refresh token available");
@@ -260,7 +252,7 @@ class AuthService {
             const response: AxiosResponse<RefreshTokenResponse> = await api.post("/api/v1/sign_in/refresh/", { refresh });
             const { access } = response.data;
 
-            Cookies.set("STRT_MAX_ACCESS_TOKEN", access, tokenCookieOptions);
+            tokenStorage.setAccessToken(access);
             authLogger.info("Token refreshed successfully");
 
             return access;
@@ -273,13 +265,12 @@ class AuthService {
 
     logout(): void {
         authLogger.info("User logout");
-        Cookies.remove("STRT_MAX_ACCESS_TOKEN", tokenCookieOptions);
-        Cookies.remove("STRT_MAX_REFRESH_TOKEN", tokenCookieOptions);
+        tokenStorage.clear();
     }
 }
 
 export default new AuthService();
 
 export const hasRefreshToken = () => {
-    return document.cookie.split("; ").some((row) => row.startsWith("STRT_MAX_REFRESH_TOKEN="));
+    return tokenStorage.hasRefreshToken();
 };

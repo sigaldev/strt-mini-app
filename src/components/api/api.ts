@@ -1,5 +1,5 @@
 import axios from "axios";
-import Cookies from "js-cookie";
+import { tokenStorage } from "./tokenStorage";
 
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -8,7 +8,7 @@ const api = axios.create({
 
 // Request interceptor — ставим access token в заголовок
 api.interceptors.request.use((config) => {
-    const token = Cookies.get("STRT_MAX_ACCESS_TOKEN");
+    const token = tokenStorage.getAccessToken();
     if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
     }
