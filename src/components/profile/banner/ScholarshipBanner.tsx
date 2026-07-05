@@ -23,7 +23,7 @@ const ScholarshipBanner = () => {
                 <p className="text-[12px] xs:text-[14px]">Твоя финансовая поддержка <br/> во время учёбы </p>
             </div>
 
-            <div className="z-10 absolute right-[-12px] top-1/2 -translate-y-2/3 w-52 xs:w-60">
+            <div className="z-10 absolute right-[-12px] top-[60%] -translate-y-2/3 w-[11em]">
                 <img src={rightImg} alt="" className="w-full" />
             </div>
 

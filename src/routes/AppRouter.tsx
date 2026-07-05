@@ -5,6 +5,7 @@ import Layout from "../components/Layout.tsx";
 import ScrollToTop from "../components/ScrollToTop.tsx";
 import {setupInterceptors} from "../components/api/setupInterceptors.ts";
 import RequireAuth from "../components/RequireAuth.tsx";
+import ErrorBoundary from "../components/ErrorBoundary.tsx";
 
 const InnerAppRouter = () => {
     const navigate = useNavigate();
@@ -48,7 +49,9 @@ const InnerAppRouter = () => {
 
 const AppRouter = () => (
     <Router>
-        <InnerAppRouter />
+        <ErrorBoundary>
+            <InnerAppRouter />
+        </ErrorBoundary>
     </Router>
 );
 
